@@ -20,10 +20,10 @@
         return service;
  
         function GetAll() {
-            $log.log('Get all called');
+            //$log.log('Get all called');
             var deferred = $q.defer();
             deferred.resolve(getUsers());
-            $log.log(deferred.promise);
+            //$log.log(deferred.promise);
             return deferred.promise;
         }
  
@@ -117,8 +117,8 @@
         // private functions
  
         function getUsers() {
-            $log.log("GetUsers called");
-            $log.log("Defining localStorage.users");
+            //$log.log("GetUsers called");
+            //$log.log("Defining localStorage.users");
             localStorage.users = JSON.stringify(
                 [ 
                     {id : 1, username : 'simon', password : 'mypassword'}, 
@@ -126,7 +126,7 @@
                     {id : 3, username : 'admin', password : 'mypassword'}
                 ]);
             //}
-            $log.log(localStorage.users);
+            //$log.log(localStorage.users);
             return JSON.parse(localStorage.users);
         }
  
