@@ -75,7 +75,7 @@ angular.module('myApp')
         }
     }
 
-    $scope.renderSignIn = function() {
+    /*$scope.renderSignIn = function() {
         gapi.signin.render('myGsignin', {
             'callback': $scope.signIn,
             'clientid': '86525225441-cfqovpohsnop75270shalha7rvihsdlv.apps.googleusercontent.com',
@@ -86,5 +86,5 @@ angular.module('myApp')
         });
     }
 
-    $scope.renderSignIn();
+    $scope.renderSignIn();*/
 })
