@@ -5,8 +5,8 @@
         .module('app')
         .controller('RegisterController', RegisterController);
  
-    RegisterController.$inject = ['UserService', '$location', '$rootScope', 'FlashService'];
-    function RegisterController(UserService, $location, $rootScope, FlashService) {
+    RegisterController.$inject = ['UserService', '$location', '$rootScope'];
+    function RegisterController(UserService, $location, $rootScope) {
         var vm = this;
  
         vm.register = register;
