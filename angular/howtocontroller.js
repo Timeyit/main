@@ -9,7 +9,7 @@
     function HowToController(AuthenticationService, $location, $rootScope, $scope, $log) {
         var vm = this;
         
-        $log.log("SessionController - Validating Credentials");
+        $log.log("HowToController - Validating log-in");
         if(angular.isDefined($rootScope.globals['currentUser']) && angular.isDefined($rootScope.globals['currentUser'].username))
         {
             $scope.myUser = $rootScope.globals['currentUser'].username;
