@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <!-- jQuery -->
+        <script src="js/jquery.js"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="js/bootstrap.min.js"></script>
+        
+        <!-- Plugin JavaScript -->
+        <script src="js/jquery.easing.min.js"></script>
+        
+        <script src="js/angular.min.js"></script>
+        <script src="js/angular-route.js"></script>
+        <script src="js/angular-cookies.js"></script>
+        <script src="js/ng-table.min.js"></script>
+        <link rel="stylesheet" href="css/ng-table.min.css">
+        <script src="node_modules/angular-md5/angular-md5.js"></script>
+        <script src="https://apis.google.com/js/client:platform.js" type="text/javascript"></script>
+        <script src="node_modules/ng-confirm/dist/ng-confirm.min.js"></script>
+        
+        <script src="angular/myapp.js"></script>
+
+        <script src="app-services/authentication.service.js"></script>
+        <script src="app-services/flash.service.js"></script>
+        <script src="app-services/user.service.local-storage.js"></script>
+        <script src="login/login.controller.js"></script>
+        <script src="angular/session.controller.js"></script>
+
+        <script src="angular/reportingcontroller.js"></script>
+
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                                    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-76836265-1', 'auto');
+            ga('send', 'pageview');
+
+        </script>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Timey</title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="css/grayscale.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+    </head>
+
+    <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-app="myApp" ng-controller="SessionController">
+        <div ng-controller="reportingcontroller"> 
+            <!-- Navigation -->
+            <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+                <div class="container" >
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                            <!--<a class="navbar-brand page-scroll" href="#page-top">
+                        <i class="fa fa-play-circle"></i>  <span class="light">Home</span> 
+                    </a>-->
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                        <ul class="nav navbar-nav">
+                            <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                            <li class="hidden">
+                                <a href="#page-top"></a>
+                            </li>
+                            <li>
+                                <a class="page-scroll"  ng-cloak>{{ user }}</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="tracktime.html">Track Time</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="#page-top">View Reports</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="howto.html" target="_blank">How To</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" ng-click="logOff()">Log Off</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container -->
+            </nav>
+
+            <!-- Track Time-->
+            <header class="intro">
+                <div class="intro-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                <br/><br/><br/><br/><br/><br/>
+                                <!--<h1 class="brand-heading">Timey</h1>
+<p class="intro-text">Track you time, increase your effectiveness</p>-->
+                                <div>
+                                    <h2> Time Report (Beta*) </h2>
+                                </div>
+                                
+                                <ul class="nav nav-pills">
+                                    <li class="active"><a data-toggle="pill" href="#daily">Daily</a></li>
+                                    <li><a data-toggle="pill" href="#weekly">Weekly</a></li>
+                                    <li><a data-toggle="pill" href="#monthly">Monthly</a></li>
+                                    <li><a data-toggle="pill" href="#laps">Laps</a></li>
+                                    
+                                </ul>
+                                
+                                <div class="tab-content" ng-cloak>
+                                    <div id="daily" class="tab-pane fade in active">
+                                        <!-- View Work Items -->
+
+                                        <form class="form-inline">
+                                            <div class="searchbar">
+                                                <label>Search: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchDays.task" required />
+                                                <label>Date: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchDays.dateStart" required />
+                                            </div>
+                                        </form>
+
+                                        <div class="dataTable_wrapper" ng-cloak>
+                                            <table ng-table="tableParams" class="table" show-filter="true">
+                                                <tr ng-repeat="x in myDataDaily | filter:searchDays">
+                                                    <td title="'Task '" sortable="'task'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.task}}</td>
+                                                    <td title="'Date'" sortable="'dateStart'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.dateStart}}</td>
+                                                    <td title="'Duration'" sortable="'totalTime'" ng-click="go(x)"  ng-cloak>
+                                                        {{x.totalTime | secondsToDateTime | date:'HH:mm:ss' }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="weekly" class="tab-pane fade">
+                                        <!-- View Work Items -->
+
+                                        <form class="form-inline">
+                                            <div class="searchbar">
+                                                <label>Search: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchWeeks.task" required />
+                                                <label>Week: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchWeeks.weekStart" required />
+                                            </div>
+                                        </form>
+
+                                        <div class="dataTable_wrapper" ng-cloak>
+                                            <table ng-table="tableParams" class="table" show-filter="true">
+                                                <tr ng-repeat="x in myDataWeekly | filter:searchWeeks">
+                                                    <td title="'Task '" sortable="'task'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.task}}</td>
+                                                    <td title="'Week'" sortable="'weekStart'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.weekStart}}</td>
+                                                    <td title="'Duration'" sortable="'totalTime'" ng-click="go(x)"  ng-cloak>
+                                                        {{x.totalTime | secondsToDateTime | date:'HH:mm:ss' }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="monthly" class="tab-pane fade">
+                                        <!-- View Work Items -->
+
+                                        <form class="form-inline">
+                                            <div class="searchbar">
+                                                <label>Search: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchMonths.task" required />
+                                                <label>Month: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchMonths.monthStart" required />
+                                            </div>
+                                        </form>
+
+                                        <div class="dataTable_wrapper" ng-cloak>
+                                            <table ng-table="tableParams" class="table" show-filter="true">
+                                                <tr ng-repeat="x in myDataMonthly | filter:searchMonths">
+                                                    <td title="'Task '" sortable="'task'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.task}}</td>
+                                                    <td title="'Month'" sortable="'monthStart'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.monthStart}}</td>
+                                                    <td title="'Duration'" sortable="'totalTime'" ng-click="go(x)"  ng-cloak>
+                                                        {{x.totalTime | secondsToDateTime | date:'HH:mm:ss' }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="laps" class="tab-pane fade">
+                                        <!-- View Work Items -->
+                                        
+                                        <form class="form-inline">
+                                            <div class="searchbar">
+                                                <label>Search: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchLaps.task" required />
+                                                <label>Time: </label>
+                                                <input type="text" name="workitem" id="workitem" class="form-control" ng-model="searchLaps.dateStart" required />
+                                            </div>
+                                        </form>
+                                        
+                                        <div class="dataTable_wrapper" ng-cloak>
+                                            <table ng-table="tableParams" class="table" show-filter="true">
+                                                <tr ng-repeat="x in myData | filter:searchLaps">
+                                                    <td title="'Task'" sortable="'task'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.task}}</td>
+                                                    <td title="'Start Time'" sortable="'timeStart'" ng-click="go(x)"  ng-cloak> 
+                                                        {{x.timeStart}}</td>
+                                                    <td title="'Duration'" sortable="'totalTime'" ng-click="go(x)"  ng-cloak>
+                                                        {{x.totalTime | secondsToDateTime | date:'HH:mm:ss' }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+
+                                <div>
+                                    <p><font size="2"> Beta*: We're constantly working on improving Timey. There will be new features coming soon for reports.
+                                        If you have any tips or ideas on what you'd like to see here. 
+                                        Let us know on <a href="http://twitter.com/timeyit" target="_blank">Twitter</a> or email us on <a href="mailto:contact@timey.it">contact@timey.it</a> </font></p>
+                                </div>
+                                <!-- END View Work Items -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <!-- Map Section -->
+        <!--<div id="map"></div>-->
+
+        <!-- Footer -->
+        <footer>
+            <div class="container text-center">
+                <p>Copyright &copy; Timey 2016</p>
+            </div>
+        </footer>
+
+        <!-- Google Maps API Key - Use your own API key to enable the map feature. More information on the Google Maps API can be found at https://developers.google.com/maps/ -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRngKslUGJTlibkQ3FkfTxj3Xss1UlZDA&sensor=false"></script>
+
+        <!-- Custom Theme JavaScript -->
+        <script src="js/grayscale.js"></script>
+
+    </body>
+
+</html>
