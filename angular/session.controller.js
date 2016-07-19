@@ -5,8 +5,8 @@
         .module('myApp')
         .controller('SessionController', SessionController);
  
-    SessionController.$inject = ['AuthenticationService', '$location', '$rootScope', 'FlashService', '$scope','$window','$log'];
-    function SessionController(AuthenticationService, $location, $rootScope, FlashService, $scope, $window, $log) {
+    SessionController.$inject = ['AuthenticationService', '$location', '$rootScope', '$scope','$window','$log'];
+    function SessionController(AuthenticationService, $location, $rootScope, $scope, $window, $log) {
         var vm = this;
         
         $log.log("SessionController - Validating Credentials");

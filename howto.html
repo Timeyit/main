@@ -10,7 +10,7 @@
 
         <!-- Plugin JavaScript -->
         <script src="js/jquery.easing.min.js"></script>
-        
+
         <script src="js/angular.min.js"></script>
         <script src="js/angular-route.js"></script>
         <script src="js/angular-cookies.js"></script>
@@ -20,6 +20,7 @@
 
         <script src="angular/myapp.js"></script>
         <script src="angular/tracktimecontroller.js"></script>
+        <script src="angular/howtocontroller.js"></script>
         <link rel="stylesheet" href="css/ng-table.min.css">
         <script src="js/ng-table.min.js"></script>
 
@@ -75,7 +76,7 @@
 
     </head>
 
-    <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-app="myApp">
+    <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-app="myApp" ng-controller="HowToController">
 
         <!-- Navigation -->
         <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
@@ -91,27 +92,55 @@
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-                    <ul class="nav navbar-nav">
-                        <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                        <li class="hidden">
-                            <a href="#page-top"></a>
-                        </li>
-                        <li>
-                            <a class="page-scroll" href="index.html">Log In</a>
-                        </li>
-                        <li>
-                            <a class="page-scroll" href="index.html#sign-up">Sign Up</a>
-                        </li>
-                        <li>
-                            <a class="page-scroll" href='#page-top'>How To</a>
-                        </li>
-                        <li>
-                            <a class="page-scroll" href="index.html#about">About</a>
-                        </li>
-                        <li>
-                            <a class="page-scroll" href="index.html#contact">Contact</a>
-                        </li>
-                    </ul>
+                    <div ng-if="myUser == ''">
+                        <ul class="nav navbar-nav">
+                            <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                            <li class="hidden">
+                                <a href="#page-top"></a>
+                            </li>
+
+                            <li>
+                                <a class="page-scroll" href="index.html">Log In</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="index.html#sign-up">Sign Up</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href='#page-top'>How To</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="index.html#about">About</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="index.html#contact">Contact</a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                    <div ng-if="myUser != ''">
+                        <ul class="nav navbar-nav">
+                            <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                            <li class="hidden">
+                                <a href="#page-top"></a>
+                            </li>
+                            <li>
+                                <a class="page-scroll"  ng-cloak>{{ myUser }}</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="tracktime.html">Track Time</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="reporting.html">View Reports</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" href="#page-top">How To</a>
+                            </li>
+                            <li>
+                                <a class="page-scroll" ng-click="logOff()">Log Off</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <!-- /.navbar-collapse -->
             </div>
