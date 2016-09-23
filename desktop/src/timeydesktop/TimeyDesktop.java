@@ -57,6 +57,12 @@ public class TimeyDesktop {
 		        }
 		    };
 		    
+		    ActionListener listenerForceSync = new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		        	TimeyEngine.getInstance().GetWorkItems();
+		        }
+		    };
+		    
 		    ActionListener listenerExit = new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
 		        	TimeyEngine.getInstance().CloseApplication();
@@ -75,6 +81,11 @@ public class TimeyDesktop {
 		    MenuItem menuItemShowSample = new MenuItem("Show Sample");
 		    menuItemShowSample.addActionListener(listenerShowSample);
 		    popup.add(menuItemShowSample);
+		    
+		    // MenuItem -> Force Sync
+		    MenuItem menuItemForceSync = new MenuItem("Force Sync");
+		    menuItemForceSync.addActionListener(listenerForceSync);
+		    popup.add(menuItemForceSync);
 		    
 		    // MenuItem -> Exit
 		    MenuItem menuItemExit = new MenuItem("Exit");

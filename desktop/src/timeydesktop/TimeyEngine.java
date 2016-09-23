@@ -1,5 +1,23 @@
 package timeydesktop;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.*;
+import org.apache.http.message.BasicNameValuePair;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+
 import ch.swingfx.twinkle.NotificationBuilder;
 import ch.swingfx.twinkle.event.NotificationEvent;
 import ch.swingfx.twinkle.event.NotificationEventAdapter;
@@ -35,6 +53,51 @@ public class TimeyEngine {
 	public void StartTracking(String taskName)
 	{
 		System.out.println("Start Tracking");
+	}
+	
+	public String GetAPIKey(String username, String password)
+	{
+		return "";
+	}
+	
+	public boolean VerifyAPIKey(String apiKey)
+	{
+		return false;
+	}
+	
+	public List<WorkItem> GetWorkItems()
+	{
+		try
+		{
+			System.out.println("Getting work items");
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost("http://timey.it/PHP/workItem_getAll.php");
+
+			// Request parameters and other properties.
+			List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+			params.add(new BasicNameValuePair("userName", "Simon"));
+			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
+			//Execute and get the response.
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+			    InputStream instream = entity.getContent();
+			    String jsonData = IOUtils.toString(instream, "UTF-8"); 
+			    instream.close();
+			    System.out.println("Got data: " + jsonData);
+			    ObjectMapper mapper = new ObjectMapper();
+			    List<WorkItem> workItems = mapper.readValue(jsonData, new TypeReference<List<WorkItem>>(){});
+			    System.out.println("Got : " + workItems.size() + " work items" );
+			    return workItems;
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Failure...");
+		}
+		return new ArrayList<WorkItem>();
 	}
 	
 	public void ShowReminderPopup(String taskName)
