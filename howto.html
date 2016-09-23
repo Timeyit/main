@@ -53,7 +53,7 @@
 
         <title>Timey</title>
 
-        <!-- Bootstrap Core CSS -->
+        <!-- Bootstrap Core CSS -->/
         <link href="css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom CSS -->
@@ -159,67 +159,104 @@
             <div class="intro-body">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-8 col-md-offset-2">
-                            <br/><br/><br/><br/><br/><br/>
-                            <h2>Who is Timey for?</h2>
-                            <div id="list2">
-                                <ol>
-                                    <li>Entrepreneur</li>
-                                    <li>Freelancer</li>
-                                    <li>Consultant</li>
-                                    <li>Intrapreneur</li>
-                                    <li>YOU! Anyone who wants to be more efficient and productive with their time.</li>
-                                </ol>
+                        <br/><br/><br/><br/><br/><br/>
+                        <div>
+                            <h2> How To Use Timey </h2>
+                        </div>
+
+                        <ul class="nav nav-pills">
+                            <li class="active"><a data-toggle="pill" href="#whoisitfor">Who is it for?</a></li>
+                            <li><a data-toggle="pill" href="#howdoiuse">How do I use?</a></li>
+                            <li><a data-toggle="pill" href="#howtocreate">Create Task</a></li>
+                            <li><a data-toggle="pill" href="#starttimingtask">Start Timing</a></li>
+                            <li><a data-toggle="pill" href="#stoptimingtask">Stop Timing</a></li>
+                            <li><a data-toggle="pill" href="#deletetimeytask">Delete Task</a></li>
+                        </ul>
+
+                        <div class="tab-content" ng-cloak>
+                            <br/><br/>
+                            <div id="whoisitfor" class="tab-pane fade in active">
+                                <h4>Who is Timey for?</h4>
+                                <div id="list2">
+                                    <ol>
+                                        <li>Entrepreneur</li>
+                                        <li>Freelancer</li>
+                                        <li>Consultant</li>
+                                        <li>Intrapreneur</li>
+                                        <li>YOU! Anyone who wants to be more efficient and productive with their time.</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div id="howdoiuse" class="tab-pane fade">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <h4>How do I use timey?</h4>
+                                    <p>There are several ways you can use Timey. The Timey Team has laid out a few use cases of how some of our customers and the team use the tool. Timey is a tool made by us for you. We encourage you to make Timey your own and use it in a way that makes sense for you. If you think that there are some features missing or if you want to share how you are using timey let us know on twitter @timey.it or by emailing us at feedback@timey.it</p>
+                                    <br/>
+                                </div>
+                            </div>
+                            <div id="howtocreate" class="tab-pane fade">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <h4>How to Create a Task</h4>
+                                        <p class="phowto">To create a new Timey task:</p>
+                                        <div id="list2">
+                                            <ol>
+                                                <li>Go to the Track Time page</li>
+                                                <li>Type in the Name of Task and click the “Create” button.</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="starttimingtask" class="tab-pane fade">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <h4>How to Start Timing a Task</h4>
+                                        <p class="phowto">To start timing a task:</p>
+                                        <div id="list2">
+                                            <ol>
+                                                <li>Go to the Track Time page</li>
+                                                <li>Locate the Task you would like to start timing and select it. (If it is not on the list you can create a new task).</li>
+                                                <li>Task name and timer is started at the top of the Track Time page.</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="stoptimingtask" class="tab-pane fade">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="col-md-10 col-md-offset-1">
+
+                                        <h4>How to Stop Timing a Task</h4>
+                                        <p class="phowto">To stop timing a task that you have started timing:</p>
+                                        <div id="list2">
+                                            <ol>
+                                                <li>Go to the Track Time page</li>
+                                                <li>The current task being tracked is displayed at the top of the Track Time page.</li>
+                                                <li>Click on “Stop”.</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="deletetimeytask" class="tab-pane fade">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <h4>Deleting a Task</h4>
+                                        <p class="phowto">To delete a Timey Task:</p>
+                                        <div id="list2">
+                                            <ol>
+                                                <li>Go to the Track Time page</li>
+                                                <li>Locate the Task that you would like to delete.</li>
+                                                <li>Next to the task you will see an X</li>
+                                                <li>Click the X to delete the task.</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-8 col-md-offset-2">
-                            <h2>How do I use timey?</h2>
-                            <p>There are several ways you can use Timey. The Timey Team has laid out a few use cases of how some of our customers and the team use the tool. Timey is a tool made by us for you. We encourage you to make Timey your own and use it in a way that makes sense for you. If you think that there are some features missing or if you want to share how you are using timey let us know on twitter @timey.it or by emailing us at feedback@timey.it</p>
-                            <br/>
-                            <h3>How to Create a Task</h3>
-                            <p class="phowto">To create a new Timey task:</p>
-                            <div id="list2">
-                                <ol>
-                                    <li>Go to the Track Time page</li>
-                                    <li>Type in the Name of Task and click the “Create” button.</li>
-                                </ol>
-                            </div>
-
-                            <h3>How to Start Timing a Task</h3>
-                            <p class="phowto">To start timing a task:</p>
-                            <div id="list2">
-                                <ol>
-                                    <li>Go to the Track Time page</li>
-                                    <li>Locate the Task you would like to start timing and select it. (If it is not on the list you can create a new task).</li>
-                                    <li>Task name and timer is started at the top of the Track Time page.</li>
-                                </ol>
-                            </div>
-
-                            <h3>How to Stop Timing a Task</h3>
-                            <p class="phowto">To stop timing a task that you have started timing:</p>
-                            <div id="list2">
-                                <ol>
-                                    <li>Go to the Track Time page</li>
-                                    <li>The current task being tracked is displayed at the top of the Track Time page.</li>
-                                    <li>Click on “Stop”.</li>
-                                </ol>
-                            </div>
-
-                            <h3>Deleting a Task</h3>
-                            <p class="phowto">To delete a Timey Task:</p>
-                            <div id="list2">
-                                <ol>
-                                    <li>Go to the Track Time page</li>
-                                    <li>Locate the Task that you would like to delete.</li>
-                                    <li>Next to the task you will see an X</li>
-                                    <li>Click the X to delete the task.</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </header>

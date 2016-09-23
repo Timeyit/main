@@ -126,7 +126,7 @@
                     {id : 3, username : 'admin', password : 'mypassword'}
                 ]);
             //}
-            //$log.log(localStorage.users);
+            //  $log.log(localStorage.users);
             return JSON.parse(localStorage.users);
         }
  
