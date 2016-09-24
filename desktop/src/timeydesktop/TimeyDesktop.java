@@ -1,33 +1,30 @@
 package timeydesktop;
 
-import ch.swingfx.twinkle.NotificationBuilder;
-import ch.swingfx.twinkle.event.NotificationEvent;
-import ch.swingfx.twinkle.event.NotificationEventAdapter;
-import ch.swingfx.twinkle.style.INotificationStyle;
-import ch.swingfx.twinkle.style.theme.DarkDefaultNotification;
-import ch.swingfx.twinkle.style.theme.LightDefaultNotification;
-import ch.swingfx.twinkle.window.Positions;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import java.util.*;
+import java.util.Timer;
 
 
 public class TimeyDesktop {
 
+	static MenuItem menuItemTimeyOnline = new MenuItem("Timey Online");
+    static Menu menuTrack = new Menu("Track");
+    static MenuItem menuItemForceSync = new MenuItem("Force Sync");
+    static MenuItem menuItemExit = new MenuItem("Exit");
+    static Timer timeySyncTimer = new Timer();
+    static TrayIcon trayIcon = null;
+    
 	public static void main(String[] args) throws IOException {
+		
+		TimeyEngine.getInstance().Sync();
+		
 		// AA the text
 		System.setProperty("swing.aatext", "true");
-		System.out.println("Working Directory = " +
-	              System.getProperty("user.dir"));
 		
-		TrayIcon trayIcon = null;
 		if (SystemTray.isSupported() && true) {
 		    // get the SystemTray instance
 		    SystemTray tray = SystemTray.getSystemTray();
@@ -51,15 +48,9 @@ public class TimeyDesktop {
 		        }
 		    };
 		    
-		    ActionListener listenerShowSample = new ActionListener() {
-		        public void actionPerformed(ActionEvent e) {
-		        	TimeyEngine.getInstance().ShowReminderPopup("test task");
-		        }
-		    };
-		    
 		    ActionListener listenerForceSync = new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
-		        	TimeyEngine.getInstance().GetWorkItems();
+		        	TimeyEngine.getInstance().Sync();
 		        }
 		    };
 		    
@@ -72,23 +63,20 @@ public class TimeyDesktop {
 		    PopupMenu popup = new PopupMenu();
 		    // create menu item for the default action
 		    
-		    // MenuItem -> Timey Website
-		    MenuItem menuItemTimeyOnline = new MenuItem("Timey Online");
+		    // ---- MenuItem -> Timey Website
 		    menuItemTimeyOnline.addActionListener(listenerTimeyOnline);
 		    popup.add(menuItemTimeyOnline);
 		    
-		    // MenuItem -> Show Sample
-		    MenuItem menuItemShowSample = new MenuItem("Show Sample");
-		    menuItemShowSample.addActionListener(listenerShowSample);
-		    popup.add(menuItemShowSample);
+		    // ---- Menu Item -> Track
+		    popup.add(menuTrack);
+		    // Populate submenu
+		    PopulateTrackMenu();
 		    
-		    // MenuItem -> Force Sync
-		    MenuItem menuItemForceSync = new MenuItem("Force Sync");
+		    // ---- MenuItem -> Force Sync
 		    menuItemForceSync.addActionListener(listenerForceSync);
 		    popup.add(menuItemForceSync);
 		    
-		    // MenuItem -> Exit
-		    MenuItem menuItemExit = new MenuItem("Exit");
+		    // ---- MenuItem -> Exit
 		    menuItemExit.addActionListener(listenerExit);
 		    popup.add(menuItemExit);
 		    
@@ -110,15 +98,43 @@ public class TimeyDesktop {
 		    // perform other actions
 		    
 		}
-		// ...
-		// some time later
-		// the application state has changed - update the image
-		if (trayIcon != null) {
-		    //trayIcon.setImage(updatedImage);
-		}
-		// ...
 		
-		
+		TimerTask timerTask = new TimerTask() {
+	        @Override
+	        public void run() {
+	            /* The interface UpdateIndicatorsReceiver has an updateIndicators method */
+	            TimeyEngine.getInstance().Sync();
+	            PopulateTrackMenu();
+	            
+	            // ...
+	    		// some time later
+	    		// the application state has changed - update the image
+	    		if (trayIcon != null) {
+	    		    //trayIcon.setImage(updatedImage);
+	    		}
+	    		// ...
+	        }
+	    };
+	    
+		timeySyncTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.SyncTime, TimeyEngine.Options.SyncTime);
 	}
 	
+	private static void PopulateTrackMenu()
+	{
+		menuTrack.removeAll();
+		for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
+        	final WorkItem item = i.next();
+        	
+        	ActionListener listenerTrackItem = new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		        	TimeyEngine.getInstance().StartTracking(item.nameWorkItem);
+		        }
+		    };
+		    
+        	MenuItem trackItem = new MenuItem(item.nameWorkItem);
+        	trackItem.addActionListener(listenerTrackItem);
+        	menuTrack.add(trackItem);
+            //System.out.println(item.nameWorkItem);
+        }
+	}
 }
