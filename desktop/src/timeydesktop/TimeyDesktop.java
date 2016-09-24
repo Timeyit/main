@@ -127,11 +127,12 @@ public class TimeyDesktop {
         	
         	ActionListener listenerTrackItem = new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
-		        	TimeyEngine.getInstance().StartTracking(item.nameWorkItem);
+		        	TimeyEngine.getInstance().StartTracking(item.idworkItem);
 		        }
 		    };
 		    
-        	MenuItem trackItem = new MenuItem(item.nameWorkItem);
+		    //System.out.println(item.nameWorkItem + " - " + item.idworkItem + " - " + item.duration);
+        	MenuItem trackItem = new MenuItem(item.nameWorkItem + " (" + item.duration + ")");
         	trackItem.addActionListener(listenerTrackItem);
         	menuTrack.add(trackItem);
             //System.out.println(item.nameWorkItem);

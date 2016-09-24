@@ -2,6 +2,7 @@ package timeydesktop;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,7 +32,7 @@ public class TimeyEngine {
 	public static List<WorkItem> WorkItems = new ArrayList<WorkItem>();
 	public static TimeyOptions Options = new TimeyOptions();
 	public static boolean IsTracking = false;
-	public static String TrackedItem = "";
+	public static WorkItem TrackedItem = new WorkItem();
 	public static int NumAlarams = 0;
 	private static Timer trackTimer = new Timer();
 	public static Instant TrackingStartTime = new Instant(Long.MIN_VALUE);
@@ -50,7 +51,7 @@ public class TimeyEngine {
 	public void StopTracking()
 	{
 		System.out.println("Stop Tracking");
-		TrackedItem = "";
+		TrackedItem = new WorkItem();
 		NumAlarams = 0;
 		TrackingStartTime = new Instant(Long.MIN_VALUE);
 		TrackingLastSync = new Instant(Long.MIN_VALUE);
@@ -65,13 +66,21 @@ public class TimeyEngine {
 		IsTracking = true;
 	}
 	
-	public void StartTracking(String taskName)
+	public void StartTracking(String idWorkItem)
 	{
-		System.out.println("Now Tracking: " + taskName);
-		TrackedItem = taskName;
+		
+		for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
+        	final WorkItem item = i.next();
+        	if(item.idworkItem == idWorkItem)
+        	{
+        		TrackedItem = item;
+        	}
+		}
+		
+		System.out.println("Now Tracking: " + TrackedItem.nameWorkItem);
 		TrackingStartTime = new Instant();
 		TrackingLastSync = new Instant();
-		ShowTrackStartPopup(taskName);
+		ShowTrackStartPopup(TrackedItem.nameWorkItem);
 		IsTracking = true;
 		
 		TimerTask timerTask = new TimerTask() {
@@ -102,7 +111,11 @@ public class TimeyEngine {
 			Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
 			System.out.println("Time Since Last Sync: " + (double)timeSinceLastSync.toDurationMillis()/(double)1000);
 			System.out.println("Time Since Last Start: " + (double)timeSinceStart.toDurationMillis()/(double)1000);
-			TrackingLastSync = new Instant();
+			if(UploadTrackedTime())
+			{
+				TrackingLastSync = new Instant();
+			}
+			
 		}
 		else
 		{
@@ -146,8 +159,47 @@ public class TimeyEngine {
 		return new ArrayList<WorkItem>();
 	}
 	
+	public boolean UploadTrackedTime()
+	{
+		Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
+		long duration = timeSinceStart.toDuration().getStandardSeconds();
+		duration = duration + TrackedItem.GetDurationLong(); 
+		try
+		{
+			System.out.println("Uploading tracked time");
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost("http://timey.it/PHP/workItem_update.php");
+
+			// Request parameters and other properties.
+			String requestJSON = "{\"idworkItem\":\"" + TrackedItem.idworkItem + "\",\"duration\":" + Long.toString(duration) + "} ";
+			System.out.println("Request JSON: " + requestJSON);
+			StringEntity params = new StringEntity(requestJSON);
+			httppost.addHeader("content-type", "application/json");
+			httppost.setEntity(params);
+	        
+			//Execute and get the response.
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+			    InputStream instream = entity.getContent();
+			    String jsonData = IOUtils.toString(instream, "UTF-8"); 
+			    instream.close();
+			    System.out.println("Response JSON: " + jsonData);
+			    return true;
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Failure...");
+		}
+		return false;
+	}
+	
 	public void ShowReminderPopup()
 	{
+		Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
+		int TimeStartSec = (int) Math.round((double)timeSinceStart.toDurationMillis()/(double)1000);
 		// First we define the style/theme of the window.
 				// Note how we override the default values
 				INotificationStyle style = new DarkDefaultNotification()
@@ -159,7 +211,7 @@ public class TimeyEngine {
 				new NotificationBuilder()
 						.withStyle(style) // Required. here we set the previously set style
 						.withTitle("Timey") // Required.
-						.withMessage("Click message if still working on \"" + TimeyEngine.TrackedItem + "\".") // Optional
+						.withMessage("Click message if still working on \"" + TimeyEngine.TrackedItem + "\" (" + TimeStartSec + " s).") // Optional
 						//.withIcon(new ImageIcon(QuickStart.class.getResource("/twinkle.png"))) // Optional. You could also use a String path
 						.withDisplayTime(10000) // Optional
 						.withPosition(Positions.SOUTH_EAST) // Optional. Show it at the center of the screen

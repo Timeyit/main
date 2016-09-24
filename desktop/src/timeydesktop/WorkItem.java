@@ -11,4 +11,9 @@ public class WorkItem {
 	public String nameWorkItem;
 	public String idworkItem;
 	public String duration;
+	
+	public long GetDurationLong()
+	{
+		return Long.parseLong(duration);
+	}
 }
