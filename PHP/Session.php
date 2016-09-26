@@ -42,7 +42,7 @@ class Session {
         mysql_select_db($Settings->db_name, $conn);
 
         // query to insert workItem
-        $query = "INSERT INTO " . $this->table_name . " (username, sessionkey, time_start, time_lastseen) VALUES ('" . $username . "','". $sessionkey ."', NOW(), NOW())";
+        $query = "INSERT INTO " . $this->table_name . " (username, alive, sessionkey, time_start, time_lastseen) VALUES ('" . $username . "', 1, '". $sessionkey ."', NOW(), NOW())";
 
         // execute query
         if (mysql_query($query))
@@ -80,7 +80,7 @@ class Session {
 
         mysql_select_db($Settings->db_name, $conn);
 
-        $query = "SELECT * FROM " . $this->table_name . " WHERE sessionkey='" . $sessionkey . "' AND time_lastseen >= NOW() - INTERVAL 30 MINUTE";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE sessionkey='" . $sessionkey . "' AND time_lastseen >= NOW() - INTERVAL 30 MINUTE AND alive = 1";
 
         $result = mysql_query($query, $conn);
         $num_rows = mysql_num_rows($result);
@@ -97,7 +97,86 @@ class Session {
 
     function refreshSession()
     {
+        error_reporting(E_ERROR);
 
+        // Get data from client POST
+        $raw_data = file_get_contents("php://input");
+        $data = json_decode($raw_data, false);
+        $sessionkey = $data->sessionkey;
+
+        if($this->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        // Create connection
+        $Settings = new Settings();
+        $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
+
+        // Check connection
+        if (!$conn)
+        {
+            die('Could not connect: ' . mysql_error());
+            return "SQLERROR";
+        }
+
+        mysql_select_db($Settings->db_name, $conn);
+        
+        $query = "UPDATE " . $this->table_name . 
+            " SET time_lastseen = NOW()" . 
+            " WHERE sessionkey = '". $sessionkey ."'";
+
+        $result = mysql_query($query, $conn);
+        if ($result)
+        {
+            return "OK";
+            //return false;
+        }
+        else
+        {
+            return "fail";
+        }
+    }
+    
+    function closeSession()
+    {
+        error_reporting(E_ERROR);
+
+        // Get data from client POST
+        $raw_data = file_get_contents("php://input");
+        $data = json_decode($raw_data, false);
+        $sessionkey = $data->sessionkey;
+
+        if($this->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        // Create connection
+        $Settings = new Settings();
+        $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
+
+        // Check connection
+        if (!$conn)
+        {
+            die('Could not connect: ' . mysql_error());
+            return "SQLERROR";
+        }
+
+        mysql_select_db($Settings->db_name, $conn);
+        
+        $query = "UPDATE " . $this->table_name . 
+            " SET alive = 0" . 
+            " WHERE sessionkey = '". $sessionkey ."'";
+
+        $result = mysql_query($query, $conn);
+        if ($result)
+        {
+            return "OK";
+            //return false;
+        }
+        else
+        {
+            return "fail";
+        }
     }
 
     function GUID()
