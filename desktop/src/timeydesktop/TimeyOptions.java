@@ -8,11 +8,11 @@ public class TimeyOptions {
 	}
 	
 	public long SyncTime = 30000;
-	public int AlarmTimeMin1 = 5;
-	public int AlarmTimeMin2 = 5;
-	public int AlarmTimeMin3 = 10;
-	public int AlarmTimeMin4 = 10;
-	public int AlarmTimeMin5 = 20;
+	public long AlarmTimeMS1 = 40000;
+	public long AlarmTimeMS2 = 5*60*1000;
+	public long AlarmTimeMS3 = 10*60*1000;
+	public long AlarmTimeMS4 = 10*60*1000;
+	public long AlarmTimeMS5 = 20*60*1000;
 	
 	public String Username = "Simon";
 }

@@ -90,7 +90,7 @@ public class TimeyEngine {
 	        }
 	    };
 	    
-		trackTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.AlarmTimeMin1*60000, TimeyEngine.Options.AlarmTimeMin1*60000);
+		trackTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.AlarmTimeMS1, TimeyEngine.Options.AlarmTimeMS1);
 	}
 	
 	public String GetAPIKey(String username, String password)
@@ -211,7 +211,7 @@ public class TimeyEngine {
 				new NotificationBuilder()
 						.withStyle(style) // Required. here we set the previously set style
 						.withTitle("Timey") // Required.
-						.withMessage("Click message if still working on \"" + TimeyEngine.TrackedItem + "\" (" + TimeStartSec + " s).") // Optional
+						.withMessage("Click message if still working on \"" + TimeyEngine.TrackedItem.nameWorkItem + "\" (" + TimeStartSec + " s).") // Optional
 						//.withIcon(new ImageIcon(QuickStart.class.getResource("/twinkle.png"))) // Optional. You could also use a String path
 						.withDisplayTime(10000) // Optional
 						.withPosition(Positions.SOUTH_EAST) // Optional. Show it at the center of the screen
