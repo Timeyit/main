@@ -1,15 +1,11 @@
 <?php
-class User {
+include_once 'Settings.php';
 
-    include_once 'Settings.php';
-    Settings = new Settings();
+class User {    
+    
     
     // database connection and table name
     public $table_name = "user";
-    public $host = $Settings->host;
-    public $db_name = $Settings->db_name; 
-    public $username = $Settings->$username; 
-    public $password = $Settings->$password;
 
     // create product
     function checkLogin()
@@ -17,7 +13,8 @@ class User {
         error_reporting(E_ERROR);
         
         // Create connection
-        $conn = mysql_connect($this->host, $this->username, $this->password);
+        $Settings = new Settings();
+        $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
 
         // Check connection
         if (!$conn)
@@ -25,7 +22,7 @@ class User {
             die('Could not connect: ' . mysql_error());
         }
 
-        mysql_select_db($this->db_name, $conn);
+        mysql_select_db($Settings->db_name, $conn);
 
         // Get data from client POST
         $data = json_decode(file_get_contents("php://input"));
@@ -68,7 +65,8 @@ class User {
         error_reporting(E_ERROR);
         
         // Create connection
-        $conn = mysql_connect($this->host, $this->username, $this->password);
+        $Settings = new Settings();
+        $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
 
         // Check connection
         if (!$conn)
@@ -76,7 +74,7 @@ class User {
             die('Could not connect: ' . mysql_error());
         }
 
-        mysql_select_db($this->db_name, $conn);
+        mysql_select_db($Settings->db_name, $conn);
 
         // Get data from client POST
         $data = json_decode(file_get_contents("php://input"));
@@ -115,7 +113,8 @@ class User {
     function deleteUser()
     {   
         // Create connection
-        $conn = mysql_connect($this->host, $this->username, $this->password);
+        $Settings = new Settings();
+        $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
 
         // Check connection
         if (!$conn)
@@ -123,7 +122,7 @@ class User {
             die('Could not connect: ' . mysql_error());
         }
 
-        mysql_select_db($this->db_name, $conn);
+        mysql_select_db($Settings->db_name, $conn);
 
         // Get data from client POST
         $data = json_decode(file_get_contents("php://input"));
