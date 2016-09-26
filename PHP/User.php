@@ -36,30 +36,26 @@ class User {
         $result = mysql_query($query);
         if (!$result)
         {
-            echo "Fail";
             mysql_close($conn);
-            return false;
+            return "SQLERROR";
         }
         else
         {
             if(mysql_num_rows($result) > 0)
             {
-                echo "OK";
+                
                 //close the db connection
                 mysql_close($conn);
-
-                return true;
+                return "OK";
             }
             else
             {
-                echo "Fail";
                 mysql_close($conn);
-                return false;
+                return "SQLERROR";
             }
         }
     }
 
-    // create product
     function createUser()
     {   
         error_reporting(E_ERROR);
@@ -86,8 +82,8 @@ class User {
         $num_rows = mysql_num_rows($result);
         if($num_rows > 0)
         {
-            echo "exists";
-            return false;
+            return "exists";
+            //return false;
         }
         
         // query to insert workItem
@@ -97,15 +93,16 @@ class User {
         // execute query
         if (mysql_query($query))
         {
-            echo "OK";
+            return "OK";
             mysql_close($conn);
-            return true;
+            //return true;
         }
         else
         {
-            echo "SQL ERROR Creating User in User()";
+            //echo "SQL ERROR Creating User in User()";
             mysql_close($conn);
-            return false;
+            //return false;
+            return "SQLERROR";
         }
     }
 
