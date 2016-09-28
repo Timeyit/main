@@ -14,5 +14,4 @@ public class TimeyOptions {
 	public long AlarmTimeMS4 = 10*60*1000;
 	public long AlarmTimeMS5 = 20*60*1000;
 	
-	public String Username = "Simon";
 }

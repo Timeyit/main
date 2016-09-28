@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.*;
@@ -37,6 +38,10 @@ public class TimeyEngine {
 	private static Timer trackTimer = new Timer();
 	public static Instant TrackingStartTime = new Instant(Long.MIN_VALUE);
 	public static Instant TrackingLastSync = new Instant(Long.MIN_VALUE);
+	public static TimeyConfig config = new TimeyConfig();
+	public static String SessionToken = null;
+	//public static String ApiBase = "http://timey.it/PHP/";
+	public static String ApiBase = "http://localhost:1337/PHP/";
 	protected TimeyEngine() {
 		// Exists only to defeat instantiation.
 	}
@@ -93,9 +98,74 @@ public class TimeyEngine {
 		trackTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.AlarmTimeMS1, TimeyEngine.Options.AlarmTimeMS1);
 	}
 	
-	public String GetAPIKey(String username, String password)
+	public String GetLatestVersion()
 	{
-		return "";
+		try
+		{
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpGet request = new HttpGet(ApiBase + "version.php");
+	        
+			//Execute and get the response.
+			HttpResponse response = httpclient.execute(request);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+			    InputStream instream = entity.getContent();
+			    String jsonData = IOUtils.toString(instream, "UTF-8"); 
+			    instream.close();
+			    System.out.println("Got data: " + jsonData);
+
+			    return jsonData;
+			}
+		}
+		catch(Exception ex)
+		{
+			// Do nothing for now
+		}
+		return "0.0";
+	}
+	
+	public String OpenSession()
+	{
+		try
+		{
+			System.out.println("Opening Session");
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(ApiBase + "session_createSession.php");
+
+			// Request parameters and other properties.
+			String requestJSON = "{\"username\":\"" + config.getUsername() + "\",\"password\":\"" + config.getPassword() + "\"} ";
+			System.out.println("Request JSON: " + requestJSON);
+			StringEntity params = new StringEntity(requestJSON);
+			httppost.addHeader("content-type", "application/json");
+			httppost.setEntity(params);
+	        
+			//Execute and get the response.
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+			    InputStream instream = entity.getContent();
+			    String responseData = IOUtils.toString(instream, "UTF-8"); 
+			    instream.close();
+			    System.out.println("Response: " + responseData);
+			    if(responseData.contains("fail"))
+			    {
+			    	return null;
+			    }
+			    else
+			    {
+			    	SessionToken = responseData;
+			    	return responseData;
+			    }
+			    
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Failure...");
+		}
+		return null;
 	}
 	
 	public boolean VerifyAPIKey(String apiKey)
@@ -130,10 +200,10 @@ public class TimeyEngine {
 		{
 			System.out.println("Getting work items");
 			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost("http://timey.it/PHP/workItem_getAll.php");
+			HttpPost httppost = new HttpPost(ApiBase + "workItem_getAll.php");
 
 			// Request parameters and other properties.
-			StringEntity params =new StringEntity("{\"user_username\":\"" + Options.Username + "\"} ");
+			StringEntity params =new StringEntity("{\"user_username\":\"" + config.getUsername()  + "\"} ");
 			httppost.addHeader("content-type", "application/json");
 			httppost.setEntity(params);
 	        
@@ -168,7 +238,7 @@ public class TimeyEngine {
 		{
 			System.out.println("Uploading tracked time");
 			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost("http://timey.it/PHP/workItem_update.php");
+			HttpPost httppost = new HttpPost(ApiBase + "workItem_update.php");
 
 			// Request parameters and other properties.
 			String requestJSON = "{\"idworkItem\":\"" + TrackedItem.idworkItem + "\",\"duration\":" + Long.toString(duration) + "} ";

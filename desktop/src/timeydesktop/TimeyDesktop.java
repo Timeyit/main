@@ -3,10 +3,21 @@ package timeydesktop;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Timer;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 
 public class TimeyDesktop {
@@ -20,6 +31,73 @@ public class TimeyDesktop {
     
 	public static void main(String[] args) throws IOException {
 		
+		TimeyEngine.getInstance().GetLatestVersion();
+		
+		TimeyConfig properties = new TimeyConfig();
+		// Verify that we have the right version of the api
+
+		if(!properties.getVersion().equals(TimeyEngine.getInstance().GetLatestVersion()))
+		{
+			String message = "There is a new Timey version available. Download now?";
+		    String title = "Download new version?";
+		    // display the JOptionPane showConfirmDialog
+		    int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+		    if (reply == JOptionPane.YES_OPTION)
+		    {
+		    	try {
+					Desktop.getDesktop().browse(new URI("http://www.timey.it"));
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		}
+		int tries = 0;
+		while(TimeyEngine.SessionToken == null)
+		{
+			tries++;
+			if(tries > 3)
+			{
+				System.exit(0);
+			}
+			
+			TimeyEngine.getInstance().OpenSession();
+			if(TimeyEngine.SessionToken == null)
+			{
+				// Prompt for username & password
+				JPanel panel = new JPanel(new BorderLayout(5, 5));
+
+			    JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
+			    label.add(new JLabel("Username", SwingConstants.RIGHT));
+			    label.add(new JLabel("Password", SwingConstants.RIGHT));
+			    panel.add(label, BorderLayout.WEST);
+
+			    JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+			    JTextField username = new JTextField();
+			    controls.add(username);
+			    JPasswordField password = new JPasswordField();
+			    controls.add(password);
+			    panel.add(controls, BorderLayout.CENTER);
+
+			    int reply = JOptionPane.showConfirmDialog(null, panel, "login", JOptionPane.OK_CANCEL_OPTION);
+			    if (reply == JOptionPane.YES_OPTION) {
+			    	String uname = username.getText();
+				    String pwd = new String(password.getPassword());
+				    System.out.println("password raw: " + pwd);
+				    pwd = md5("mysalt" + pwd);
+				    System.out.println("username: " + uname);
+				    System.out.println("password: " + pwd);
+				    properties.setUsername(uname);
+				    properties.setPassword(pwd);
+		        }
+		        else {
+		           System.exit(0);
+		        }
+			    
+			}
+			
+		}
+		
 		TimeyEngine.getInstance().Sync();
 		
 		// AA the text
@@ -31,7 +109,7 @@ public class TimeyDesktop {
 		    // load an image
 		    
 		    
-		    Image image = Toolkit.getDefaultToolkit().getImage("src/resources/timey_logo_square.png");
+		    Image image = Toolkit.getDefaultToolkit().getImage(TimeyDesktop.class.getClassLoader().getResource("timey_logo_square.png"));
 		    // create a action listener to listen for default action executed on the tray icon
 		    
 		    ActionListener listenerTimeyOnline = new ActionListener() {
@@ -137,5 +215,36 @@ public class TimeyDesktop {
         	menuTrack.add(trackItem);
             //System.out.println(item.nameWorkItem);
         }
+	}
+	
+	public static String md5(String input) {
+		
+		String md5 = null;
+		
+		if(null == input) return null;
+		
+		try {
+			
+		//Create MessageDigest object for MD5
+		MessageDigest digest = MessageDigest.getInstance("MD5");
+		
+		//Update input string in message digest
+		try {
+			digest.update(input.getBytes("UTF-8"), 0, input.length());
+			//Converts message digest value in base 16 (hex) 
+			md5 = new BigInteger(1, digest.digest()).toString(16);
+			while(md5.length() < 32)
+			{
+				md5 = "0" + md5;
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		} catch (NoSuchAlgorithmException e) {
+
+			e.printStackTrace();
+		}
+		return md5;
 	}
 }
