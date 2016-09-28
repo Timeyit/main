@@ -25,83 +25,20 @@ public class TimeyDesktop {
 	static MenuItem menuItemTimeyOnline = new MenuItem("Timey Online");
     static Menu menuTrack = new Menu("Track");
     static MenuItem menuItemForceSync = new MenuItem("Force Sync");
+    static MenuItem menuItemLogOut = new MenuItem("Log Out");
     static MenuItem menuItemExit = new MenuItem("Exit");
     static Timer timeySyncTimer = new Timer();
     static TrayIcon trayIcon = null;
     
 	public static void main(String[] args) throws IOException {
 		
-		TimeyEngine.getInstance().GetLatestVersion();
-		
-		TimeyConfig properties = new TimeyConfig();
-		// Verify that we have the right version of the api
-
-		if(!properties.getVersion().equals(TimeyEngine.getInstance().GetLatestVersion()))
-		{
-			String message = "There is a new Timey version available. Download now?";
-		    String title = "Download new version?";
-		    // display the JOptionPane showConfirmDialog
-		    int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-		    if (reply == JOptionPane.YES_OPTION)
-		    {
-		    	try {
-					Desktop.getDesktop().browse(new URI("http://www.timey.it"));
-				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    }
-		}
-		int tries = 0;
-		while(TimeyEngine.SessionToken == null)
-		{
-			tries++;
-			if(tries > 3)
-			{
-				System.exit(0);
-			}
-			
-			TimeyEngine.getInstance().OpenSession();
-			if(TimeyEngine.SessionToken == null)
-			{
-				// Prompt for username & password
-				JPanel panel = new JPanel(new BorderLayout(5, 5));
-
-			    JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
-			    label.add(new JLabel("Username", SwingConstants.RIGHT));
-			    label.add(new JLabel("Password", SwingConstants.RIGHT));
-			    panel.add(label, BorderLayout.WEST);
-
-			    JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
-			    JTextField username = new JTextField();
-			    controls.add(username);
-			    JPasswordField password = new JPasswordField();
-			    controls.add(password);
-			    panel.add(controls, BorderLayout.CENTER);
-
-			    int reply = JOptionPane.showConfirmDialog(null, panel, "login", JOptionPane.OK_CANCEL_OPTION);
-			    if (reply == JOptionPane.YES_OPTION) {
-			    	String uname = username.getText();
-				    String pwd = new String(password.getPassword());
-				    System.out.println("password raw: " + pwd);
-				    pwd = md5("mysalt" + pwd);
-				    System.out.println("username: " + uname);
-				    System.out.println("password: " + pwd);
-				    properties.setUsername(uname);
-				    properties.setPassword(pwd);
-		        }
-		        else {
-		           System.exit(0);
-		        }
-			    
-			}
-			
-		}
-		
-		TimeyEngine.getInstance().Sync();
-		
 		// AA the text
 		System.setProperty("swing.aatext", "true");
+				
+		CheckVersion();
+		HandleLogin();
+		
+		TimeyEngine.getInstance().Sync();
 		
 		if (SystemTray.isSupported() && true) {
 		    // get the SystemTray instance
@@ -137,6 +74,12 @@ public class TimeyDesktop {
 		        	TimeyEngine.getInstance().CloseApplication();
 		        }
 		    };
+		    
+		    ActionListener listenerLogOut = new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		        	LogOut();
+		        }
+		    };
 		    // create a popup menu
 		    PopupMenu popup = new PopupMenu();
 		    // create menu item for the default action
@@ -153,6 +96,10 @@ public class TimeyDesktop {
 		    // ---- MenuItem -> Force Sync
 		    menuItemForceSync.addActionListener(listenerForceSync);
 		    popup.add(menuItemForceSync);
+		    
+		 // ---- MenuItem -> Force Sync
+		    menuItemLogOut.addActionListener(listenerLogOut);
+		    popup.add(menuItemLogOut);
 		    
 		    // ---- MenuItem -> Exit
 		    menuItemExit.addActionListener(listenerExit);
@@ -217,6 +164,112 @@ public class TimeyDesktop {
         }
 	}
 	
+	public static void LogOut()
+	{
+		System.out.println("Logging out");
+		try
+		{
+			TimeyConfig properties = new TimeyConfig();
+			// Verify that we have the right version of the api
+	
+			properties.setPassword("");
+			properties.setUsername("");
+			TimeyEngine.SessionToken = null;
+			HandleLogin();
+		}
+		catch(IOException ex)
+		{
+			System.err.println("Error logging out. Exiting");
+			System.exit(0);
+		}
+	}
+	
+	public static void CheckVersion()
+	{
+		try
+		{
+			TimeyConfig properties = new TimeyConfig();
+			// Verify that we have the right version of the api
+	
+			if(!properties.getVersion().equals(TimeyEngine.getInstance().GetLatestVersion()))
+			{
+				String message = "There is a new Timey version available. Download now?";
+			    String title = "Download new version?";
+			    // display the JOptionPane showConfirmDialog
+			    int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+			    if (reply == JOptionPane.YES_OPTION)
+			    {
+			    	try {
+						Desktop.getDesktop().browse(new URI("http://www.timey.it"));
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+			}
+		}
+		catch(IOException ex)
+		{
+			System.err.println("Error checking latest version. Exiting");
+			System.exit(0);
+		}
+	}
+	
+	public static void HandleLogin()
+	{
+		try
+		{
+			TimeyConfig properties = new TimeyConfig();
+			int tries = 0;
+			while(TimeyEngine.SessionToken == null)
+			{
+				tries++;
+				if(tries > 3)
+				{
+					System.exit(0);
+				}
+				
+				TimeyEngine.getInstance().OpenSession();
+				if(TimeyEngine.SessionToken == null)
+				{
+					// Prompt for username & password
+					JPanel panel = new JPanel(new BorderLayout(5, 5));
+	
+				    JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
+				    label.add(new JLabel("Username", SwingConstants.RIGHT));
+				    label.add(new JLabel("Password", SwingConstants.RIGHT));
+				    panel.add(label, BorderLayout.WEST);
+	
+				    JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+				    JTextField username = new JTextField();
+				    controls.add(username);
+				    JPasswordField password = new JPasswordField();
+				    controls.add(password);
+				    panel.add(controls, BorderLayout.CENTER);
+	
+				    int reply = JOptionPane.showConfirmDialog(null, panel, "login", JOptionPane.OK_CANCEL_OPTION);
+				    if (reply == JOptionPane.YES_OPTION) {
+				    	String uname = username.getText();
+					    String pwd = new String(password.getPassword());
+					    pwd = md5("mysalt" + pwd);
+					    properties.setUsername(uname);
+					    properties.setPassword(pwd);
+			        }
+			        else {
+			        	System.err.println("Error logging in. Exiting");
+			        	System.exit(0);
+			        }
+				    
+				}
+			}
+		}
+		catch(IOException ex)
+		{
+			System.err.println("Error logging in. Exiting");
+			System.exit(0);
+		}
+		
+	}
 	public static String md5(String input) {
 		
 		String md5 = null;
