@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TimeyDesktop" default="build" basedir=".">
+   
+  <property name="install.file" location="dist/install.xml" />
+  <property name="image.dir" location="dist/images" />
+
+  <property name="src.dir" location="src" />
+  <property name="build.dir" location="bin" />
+ 
+  <target name="clean">
+    <delete dir="${build.dir}" />
+  </target>
+ 
+  <target name="makedir">
+    <mkdir dir="${build.dir}" />
+  </target>
+ 
+  <target name="build" depends="clean, makedir">
+    <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+  </target>
+ 
+</project>
