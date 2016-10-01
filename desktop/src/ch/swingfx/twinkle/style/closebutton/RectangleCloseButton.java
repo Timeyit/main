@@ -16,8 +16,13 @@
 package ch.swingfx.twinkle.style.closebutton;
 
 
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 
 /**
  * A simple rectangle close button.

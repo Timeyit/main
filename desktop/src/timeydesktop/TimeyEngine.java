@@ -14,7 +14,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.*;
+import org.apache.http.impl.client.HttpClients;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.Instant;
@@ -24,7 +24,7 @@ import ch.swingfx.twinkle.NotificationBuilder;
 import ch.swingfx.twinkle.event.NotificationEvent;
 import ch.swingfx.twinkle.event.NotificationEventAdapter;
 import ch.swingfx.twinkle.style.INotificationStyle;
-import ch.swingfx.twinkle.style.theme.*;
+import ch.swingfx.twinkle.style.theme.DarkDefaultNotification;
 import ch.swingfx.twinkle.window.Positions;
 
 public class TimeyEngine {

@@ -15,17 +15,16 @@
 
 package ch.swingfx.twinkle.style.theme;
 
+import java.awt.Color;
+
 import ch.swingfx.color.ColorUtil;
 import ch.swingfx.twinkle.style.AbstractNotificationStyle;
 import ch.swingfx.twinkle.style.background.ColorBackground;
 import ch.swingfx.twinkle.style.closebutton.RectangleCloseButton;
-import ch.swingfx.twinkle.style.closebutton.RoundCloseButton;
 import ch.swingfx.twinkle.style.overlay.BorderOverlay;
 import ch.swingfx.twinkle.style.overlay.GradientOverlay;
 import ch.swingfx.twinkle.style.overlay.OverlayPaintMode;
 import ch.swingfx.twinkle.window.NotificationWindowTypes;
-
-import java.awt.*;
 
 /**
  * Light theme for the default window
