@@ -16,6 +16,7 @@ angular.module('myApp')
     var vm = this;
 
     $scope.user = AuthenticationService.GetUsername();
+    $scope.sessionkey = AuthenticationService.GetSessionKey();
 
     $scope.allUsers = [];/*
     vm.deleteUser = deleteUser;*/
@@ -36,7 +37,7 @@ angular.module('myApp')
 
     $scope.getAll = function()
     {
-        $http.post('PHP/timeLog_getTimeLog.php', {'user_username' : $scope.user}
+        $http.post('PHP/timeLog_getTimeLog.php', {'sessionkey' : $scope.sessionkey}
                   ).success(function (data, status, headers, config) {
             $scope.myData = [];
             $scope.myDataAllDays = [];

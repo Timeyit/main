@@ -1,6 +1,7 @@
 <?php
 
 include_once 'Settings.php';
+include_once 'Session.php';
 
 class WorkItem{    
     
@@ -11,6 +12,14 @@ class WorkItem{
     // create product
     function create()
     {
+        $session = new Session();
+        if($session->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        
+        $userName = $session->getUsername();
+        
         // Create connection
         $Settings = new Settings();
         $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
@@ -26,7 +35,7 @@ class WorkItem{
         // Get data from client POST
         $data = json_decode(file_get_contents("php://input"));
         $nameWorkItem = mysql_real_escape_string($data->itemName);
-        $userName = mysql_real_escape_string($data->userName);
+        
 
         // query to insert workItem
         $query = "INSERT INTO  " . $this->table_name . " (nameWorkItem, description, user_username, duration) 
@@ -49,6 +58,12 @@ class WorkItem{
     //Save task time update
     function saveTaskTime()
     {   
+        $session = new Session();
+        if($session->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        
         // Create connection
         $Settings = new Settings();
         $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
@@ -89,6 +104,12 @@ class WorkItem{
     function saveLapTime()
     {
         error_reporting(E_ERROR);
+        
+        $session = new Session();
+        if($session->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
         
         // Create connection
         $Settings = new Settings();
@@ -153,9 +174,17 @@ class WorkItem{
     
     // get tasks for user
     function getTask()
-    {   
+    {
         error_reporting(E_ERROR);
-
+        
+        $session = new Session();
+        if($session->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        
+        $user_username = $session->getUsername();
+        
         // Create connection
         $Settings = new Settings();
         $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
@@ -170,9 +199,6 @@ class WorkItem{
 
         // Get data from client POST
         $data = json_decode(file_get_contents("php://input"));
-        $user_username = mysql_real_escape_string($data->user_username);
-        //$user_username = 'rati';
-
         // query to insert workItem
         $query = "SELECT nameWorkItem, duration, idworkItem FROM " . $this->table_name . " WHERE user_username ='". $user_username . "'";
 
@@ -206,7 +232,17 @@ class WorkItem{
     function getTimeLog()
     {   
         error_reporting(E_ERROR);
-
+        
+        error_reporting(E_ERROR);
+        
+        $session = new Session();
+        if($session->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        
+        $user_username = $session->getUsername();
+        
         // Create connection
         $Settings = new Settings();
         $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
@@ -221,7 +257,6 @@ class WorkItem{
 
         // Get data from client POST
         $data = json_decode(file_get_contents("php://input"));
-        $user_username = mysql_real_escape_string($data->user_username);
 
         // query to insert workItem
         $query = "SELECT * FROM " . $this->table_name_time . 
@@ -258,6 +293,14 @@ class WorkItem{
     // create product
     function deleteTask()
     {   
+        error_reporting(E_ERROR);
+        
+        $session = new Session();
+        if($session->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        
         // Create connection
         $Settings = new Settings();
         $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);

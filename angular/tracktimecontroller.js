@@ -9,7 +9,8 @@ angular.module('myApp')
     var vm = this;
 
     $scope.user = AuthenticationService.GetUsername();
-
+    $scope.sessionkey = AuthenticationService.GetSessionKey();
+    
     $scope.allUsers = [];/*
     vm.deleteUser = deleteUser;*/
     updateInterval = 2;
@@ -29,7 +30,9 @@ angular.module('myApp')
 
     $scope.getAll = function()
     {
-        $http.post('PHP/workItem_getAll.php', {'user_username' : $scope.user}
+        $http.post('PHP/workItem_getAll.php', {
+            'sessionkey' : $scope.sessionkey
+        }
                   ).success(function (data, status, headers, config) {
             $scope.myData = [];
             angular.forEach(data, function(value, key) {
@@ -91,7 +94,10 @@ angular.module('myApp')
 
     $scope.deleteWorkItem = function(x) {
         $scope.currentIndex = $scope.myData.indexOf(x);
-        $http.post('PHP/workItem_delete.php', {'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem}
+        $http.post('PHP/workItem_delete.php', {
+            'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem,
+            'sessionkey' : $scope.sessionkey
+        }
                   ).success(function (data, status, headers, config) {
             // refresh the list
             $scope.getAll();
@@ -110,14 +116,20 @@ angular.module('myApp')
                     $scope.totalTime = $scope.myData[$scope.currentIndex].totalTime;
                     if($scope.lapTime % updateInterval == 0)
                     {
-                        $http.post('PHP/workItem_update.php', {'duration' : $scope.totalTime, 'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem}
+                        $http.post('PHP/workItem_update.php', {
+                            'duration' : $scope.totalTime,
+                            'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem,
+                            'sessionkey' : $scope.sessionkey
+                        }
                                   ).success(function (data, status, headers, config) {
                             // Do nothing. Only persist.
                         });
 
                         $http.post('PHP/timeLog_updateCreate.php', {'durationLap' : $scope.lapTime, 
                                                                     'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem, 
-                                                                    'idTimeLog' : $scope.idTimeLog}
+                                                                    'idTimeLog' : $scope.idTimeLog,
+                                                                    'sessionkey' : $scope.sessionkey
+                                                                   }
                                   ).success(function (data, status, headers, config) {
                             // Do nothing. Only persist.
 
@@ -178,7 +190,10 @@ angular.module('myApp')
         // fields in key-value pairs
         if($scope.nameWorkItem != '')
         {
-            $http.post('PHP/workItem_create.php', {'itemName' : $scope.nameWorkItem, 'userName' : $scope.user}
+            $http.post('PHP/workItem_create.php', {
+                'itemName' : $scope.nameWorkItem, 
+                'sessionkey' : $scope.sessionkey
+            }
                       ).success(function (data, status, headers, config) {
 
                 $scope.nameWorkItem = '';

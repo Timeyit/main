@@ -10,6 +10,7 @@
         var service = {};
 
         service.GetUsername = GetUsername;
+        service.GetSessionKey = GetSessionKey;
         service.Login = Login;
         service.SetCredentials = SetCredentials;
         service.ClearCredentials = ClearCredentials;
@@ -20,6 +21,11 @@
         {
             return $rootScope.globals.currentUser.username;
         }
+        
+        function GetSessionKey()
+        {
+            return $rootScope.globals.currentUser.sessionkey;
+        }
 
         function Login(username, password, callback) {
             $log.log("Authentication Service Login() called");
@@ -29,16 +35,25 @@
              ----------------------------------------------*/
             $timeout(function () {
                 var response;
-                $http.post('PHP/user_checkLogin.php', {'username' : username, 'password' : password}
+                $http.post('PHP/session_createSession.php', {
+                    'username' : username,
+                    'password' : password
+                }
                           ).success(function (data, status, headers, config) {
                     $log.log("Validating Login - Data: " + data);
-                    if(data == "OK")
+                    if(data.indexOf('ERROR') == -1)
                     {
-                        response = { success: true };
+                        response = { 
+                            success: true,
+                            sessionkey : data
+                        };
                     }
                     else
                     {
-                        response = { success: false, message: 'Username or password is incorrect' };
+                        response = { 
+                            success: false, 
+                            sessionkey: '',
+                            message: 'Username or password is incorrect' };
                     }
                     callback(response);
                 });
@@ -65,15 +80,13 @@
 
         }
 
-        function SetCredentials(username, password) {
-            $log.log("Auth Service - Setting Credentials");
-            var authdata = Base64.encode(username + ':' + password);
-            $log.log("Auth Service - username - " + username);
-            $log.log("Auth Service - authdata - " + authdata);
+        function SetCredentials(username, authdata, sessionkey) {
+            $log.log("Auth Service - sessionkey - " + sessionkey);
             $rootScope.globals = {
                 currentUser: {
                     username: username,
-                    authdata: authdata
+                    authdata: authdata,
+                    sessionkey: sessionkey
                 }
             };
             $log.log("Auth Service - rootScope.globals.username - " + $rootScope.globals.username);

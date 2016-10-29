@@ -18,7 +18,7 @@ angular.module('myApp')
         AuthenticationService.Login(vm.username, md5.createHash("mysalt" + vm.password), function (response) {
             if (response.success) {
                 $log.log("AuthenticationService success");
-                AuthenticationService.SetCredentials(vm.username, md5.createHash("mysalt" + vm.password));
+                AuthenticationService.SetCredentials(vm.username, md5.createHash("mysalt" + vm.password), response.sessionkey);
                 //$location.path('/tracktime.html');
                 $log.log('http://' + $location.host() + ':' + $location.port() + '/tracktime.html');
                 $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/tracktime.html';

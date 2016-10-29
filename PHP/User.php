@@ -1,5 +1,6 @@
 <?php
 include_once 'Settings.php';
+include_once 'Session.php';
 
 class User {    
     
@@ -7,7 +8,6 @@ class User {
     // database connection and table name
     public $table_name = "user";
 
-    // create product
     function checkLogin()
     {   
         error_reporting(E_ERROR);
@@ -106,7 +106,6 @@ class User {
         }
     }
 
-    //Save task time update
     function deleteUser()
     {   
         // Create connection
@@ -123,6 +122,14 @@ class User {
 
         // Get data from client POST
         $data = json_decode(file_get_contents("php://input"));
+        $sessionkey = $data->sessionkey;
+        
+        $session = new Session();
+        if($session->verifySession() != "OK")
+        {
+            return "ERRORSESSION";
+        }
+        
         $username = mysql_real_escape_string($data->username);
 
         // query to insert workItem
