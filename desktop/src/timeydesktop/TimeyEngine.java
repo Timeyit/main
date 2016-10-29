@@ -203,7 +203,7 @@ public class TimeyEngine {
 			HttpPost httppost = new HttpPost(ApiBase + "workItem_getAll.php");
 
 			// Request parameters and other properties.
-			StringEntity params =new StringEntity("{\"user_username\":\"" + config.getUsername()  + "\"} ");
+			StringEntity params =new StringEntity("{\"sessionkey\":\"" + SessionToken  + "\"} ");
 			httppost.addHeader("content-type", "application/json");
 			httppost.setEntity(params);
 	        
@@ -241,7 +241,11 @@ public class TimeyEngine {
 			HttpPost httppost = new HttpPost(ApiBase + "workItem_update.php");
 
 			// Request parameters and other properties.
-			String requestJSON = "{\"idworkItem\":\"" + TrackedItem.idworkItem + "\",\"duration\":" + Long.toString(duration) + "} ";
+			String requestJSON = "{" + 
+					"\"idworkItem\":\"" + TrackedItem.idworkItem + "\"," + 
+					"\"duration\":" + Long.toString(duration) +
+					"\"sessionkey\":\"" + SessionToken  + "\"" +
+				"} ";
 			System.out.println("Request JSON: " + requestJSON);
 			StringEntity params = new StringEntity(requestJSON);
 			httppost.addHeader("content-type", "application/json");
