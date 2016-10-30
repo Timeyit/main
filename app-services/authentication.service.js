@@ -20,6 +20,11 @@
         function GetUsername()
         {
             return $rootScope.globals.currentUser.username;
+            $http.post('PHP/session_getUsername.php', {sessionkey : $rootScope.globals.currentUser.sessionkey}
+                  ).success(function (data, status, headers, config) {
+                    return data;
+                });
+            //return 'ERROR';
         }
         
         function GetSessionKey()
