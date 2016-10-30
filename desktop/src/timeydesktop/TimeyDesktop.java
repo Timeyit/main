@@ -65,15 +65,7 @@ public class TimeyDesktop {
 		    
 		    ActionListener listenerTimeyOnline = new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
-		        	try {
-						java.awt.Desktop.getDesktop().browse(new URI("http://timey.it"));
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (URISyntaxException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+		        	TimeyEngine.getInstance().OpenReportPage();
 		        }
 		    };
 		    
@@ -276,6 +268,7 @@ public class TimeyDesktop {
 				    
 				}
 			}
+			PopulateTrackMenu();
 		}
 		catch(IOException ex)
 		{

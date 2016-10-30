@@ -43,7 +43,6 @@ class User {
         {
             if(mysql_num_rows($result) > 0)
             {
-                
                 //close the db connection
                 mysql_close($conn);
                 return "OK";

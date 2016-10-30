@@ -1,0 +1,14 @@
+machine:
+  node:
+    version: 6.3.1
+
+dependencies:
+  pre:
+    - npm prune && npm install
+    - npm run setup:ci && npm run build:demo-apps
+  cache_directories:
+    - node_modules
+
+test:
+  override:
+    - npm test

@@ -1,0 +1,73 @@
+<div class="page-header">
+    <h1 class="clearfix">
+        Intro
+        <a href="api-docs/index.html" class="btn btn-default btn-lg pull-right" role="button">API Docs</a>
+    </h1>
+</div>
+
+<div class="row">
+
+    <div class="col col-lg-6">
+        <div style="margin-top: 20px">
+            <h3>Steps for getting started (example on right)</h3>
+            <ol>
+                <li>Add references to <a href="http://angularjs.org/" target="_blank">AngularJS</a>. EG:<br/>
+<pre style="margin-top:10px" data-prettycode pretty-lang="html">
+&lt;script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"&gt;&lt;/script&gt;
+</pre>
+                </li>
+                <li>Add references to <a href="https://github.com/esvit/ng-table/">ngTable</a>'s javascript and css files. EG:<br/>
+<pre style="margin-top:10px" data-prettycode pretty-lang="html">
+&lt;link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css"&gt;
+&lt;script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"&gt;&lt;/script&gt;
+</pre>
+<p>
+    <em>Note:</em> <a href="https://www.npmjs.com/package/ng-table">ng-table npm package</a> distributes individual ES2015 modules. Use these instead, if your app uses webpack to bundle vendor dependencies
+</p>
+</li>
+                <li>Where you declare your app module, add <code>ngTable</code>:<br>
+<pre style="margin-top:10px" data-prettycode pretty-lang="js">
+angular.module("myApp", ["ngTable"]);
+</pre>
+                </li>
+                <li>In your html file within the controller where you plan to use <code>ng-table</code>, add:<br>
+<pre style="margin-top:10px" data-prettycode pretty-lang="html">
+&lt;table ng-table=&quot;vm.tableParams&quot; class=&quot;table&quot; show-filter=&quot;true&quot;&gt;
+    &lt;tr ng-repeat=&quot;user in $data&quot;&gt;
+        &lt;td title=&quot;'Name'&quot; filter=&quot;{ name: 'text'}&quot; sortable=&quot;'name'&quot;&gt;
+            {{user.name}}&lt;/td&gt;
+        &lt;td title=&quot;'Age'&quot; filter=&quot;{ age: 'number'}&quot; sortable=&quot;'age'&quot;&gt;
+            {{user.age}}&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+                </li>
+                <li>In your javascript file within the controller where you plan to use <code>ng-table</code>, declare:<br> </li>
+<pre style="margin-top:10px" data-prettycode pretty-lang="js">
+var self = this;
+var data = [{name: "Moroni", age: 50} /*,*/];
+self.tableParams = new NgTableParams({}, { dataset: data});
+</pre>
+            </ol>
+        </div>
+    </div>
+    <div class="col col-lg-6">
+
+        <h3>Example</h3>
+        <div>
+
+            <table ng-table="vm.tableParams" class="table" show-filter="true">
+                <tr ng-repeat="user in $data">
+                    <td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
+                        {{user.name}}
+                    </td>
+                    <td title="'Age'" filter="{ age: 'number'}" sortable="'age'">
+                        {{user.age}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</div>

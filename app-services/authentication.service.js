@@ -20,11 +20,6 @@
         function GetUsername()
         {
             return $rootScope.globals.currentUser.username;
-            $http.post('PHP/session_getUsername.php', {sessionkey : $rootScope.globals.currentUser.sessionkey}
-                  ).success(function (data, status, headers, config) {
-                    return data;
-                });
-            //return 'ERROR';
         }
         
         function GetSessionKey()
@@ -62,18 +57,7 @@
                     }
                     callback(response);
                 });
-                /*
-                UserService.ValidateLogin(username, password)
-                    .then(function (user) {
-                    $log.log("User object: " + user);
-                    $log.log("User password: " + user.password);
-                    if (user !== 'null' && user.password === password) {
-                        response = { success: true };
-                    } else {
-                        response = { success: false, message: 'Username or password is incorrect' };
-                    }
-                    callback(response);
-                });*/
+
             }, 1000);
 
             /* Use this for real authentication
@@ -85,18 +69,19 @@
 
         }
 
-        function SetCredentials(username, authdata, sessionkey) {
+        function SetCredentials(username, sessionkey) {
+            $log.log("Auth Service - username - " + username);
             $log.log("Auth Service - sessionkey - " + sessionkey);
+            
             $rootScope.globals = {
                 currentUser: {
                     username: username,
-                    authdata: authdata,
                     sessionkey: sessionkey
                 }
             };
-            $log.log("Auth Service - rootScope.globals.username - " + $rootScope.globals.username);
-
-            $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
+            $log.log("Auth Service - rootScope.globals.username - " + $rootScope.globals.currentUser.username);
+            $log.log("Auth Service - rootScope.globals.sessionkey - " + $rootScope.globals.currentUser.sessionkey);
+            $http.defaults.headers.common['Authorization'] = 'Basic ' + sessionkey; // jshint ignore:line
             $cookieStore.put('globals', $rootScope.globals);
         }
 

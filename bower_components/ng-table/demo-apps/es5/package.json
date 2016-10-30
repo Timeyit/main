@@ -1,0 +1,28 @@
+{
+  "name": "ng-table-demo-app-es5",
+  "version": "1.0.0",
+  "author": "Vitalii Savchuk <esvit666@gmail.com>",
+  "license": "BSD",
+  "description": "ng-table example app; app written in ECMAScript 5; ng-table added as global script tag",
+  "private": true,
+  "scripts": {
+    "_linklocal": "node ../../node_modules/linklocal/bin/linklocal.js",
+    "build": "echo \"Nothing to build\"",
+    "clean": "echo \"Nothing to clean\"",
+    "preinstall-dep": "npm run unlinklocal",
+    "install-dep": "npm install",
+    "postinstall-dep": "npm run linklocal",
+    "linklocal": "npm run _linklocal && npm prune",
+    "start": "node ../../node_modules/http-server/bin/http-server -c-1 -o",
+    "unlinklocal": "npm run _linklocal -- unlink && npm i",
+    "preuninstall-dep": "npm run unlinklocal",
+    "uninstall-dep": "npm uninstall",
+    "postuninstall-dep": "npm run linklocal"
+  },
+  "keywords": [],
+  "dependencies": {
+    "angular": "file:../../node_modules/angular",
+    "bootstrap-css-only": "file:../../node_modules/bootstrap-css-only",
+    "ng-table": "file:../../"
+  }
+}

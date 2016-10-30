@@ -48,7 +48,7 @@
         $scope.logOff = function() {
             $log.log("SessionController - LogOff");
             gapi.auth.signOut();
-            AuthenticationService.SetCredentials("","","");
+            AuthenticationService.SetCredentials("","");
             $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/index.html';
         };
         

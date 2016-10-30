@@ -1,0 +1,29 @@
+
+
+Version:	3.9
+CmdLine:	C:\xampp\htdocs\main\desktop\dist\TimeyDesktop.exe --l4j-debug
+WOW64:		yes
+Working dir:	C:\xampp\htdocs\main\desktop\dist\.
+64-bit search:	SOFTWARE\JavaSoft\Java Runtime Environment...
+32-bit search:	SOFTWARE\JavaSoft\Java Runtime Environment...
+Check:		SOFTWARE\JavaSoft\Java Runtime Environment\1.8
+Check launcher:	C:\Program Files (x86)\Java\jre1.8.0_101\bin\javaw.exe (OK)
+Match:		1.8
+Check:		SOFTWARE\JavaSoft\Java Runtime Environment\1.8.0_101
+Check launcher:	C:\Program Files (x86)\Java\jre1.8.0_101\bin\javaw.exe (OK)
+Match:		1.8.0_101
+Check:		SOFTWARE\JavaSoft\Java Runtime Environment\1.8.0_77
+Ignore:		1.8.0_077
+Check:		SOFTWARE\JavaSoft\Java Runtime Environment\1.8.0_91
+Ignore:		1.8.0_091
+64-bit search:	SOFTWARE\JavaSoft\Java Development Kit...
+Check:		SOFTWARE\JavaSoft\Java Development Kit\1.8
+Ignore:		1.8
+Check:		SOFTWARE\JavaSoft\Java Development Kit\1.8.0_20
+Ignore:		1.8.0_020
+32-bit search:	SOFTWARE\JavaSoft\Java Development Kit...
+Runtime used:	1.8.0_101 (32-bit)
+Launcher:	C:\Program Files (x86)\Java\jre1.8.0_101\bin\javaw.exe
+Launcher args:	-jar "C:\xampp\htdocs\main\desktop\dist\TimeyDesktop.exe"
+Args length:	57/32768 chars
+Exit code:	0

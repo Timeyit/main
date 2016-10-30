@@ -18,7 +18,7 @@ angular.module('myApp')
         AuthenticationService.Login(vm.username, md5.createHash("mysalt" + vm.password), function (response) {
             if (response.success) {
                 $log.log("AuthenticationService success");
-                AuthenticationService.SetCredentials(vm.username, md5.createHash("mysalt" + vm.password), response.sessionkey);
+                AuthenticationService.SetCredentials(vm.username, response.sessionkey);
                 //$location.path('/tracktime.html');
                 $log.log('http://' + $location.host() + ':' + $location.port() + '/tracktime.html');
                 $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/tracktime.html';
@@ -47,21 +47,31 @@ angular.module('myApp')
             $log.log(authResult);
             if (authResult && !authResult.error) {
                 var data = {};
-                gapi.client.load('oauth2', 'v2', function() {
+                /*gapi.client.load('oauth2', 'v2', function() {
                     gapi.client.oauth2.userinfo.get().execute(function(resp) {
                         // Shows user email
                         console.log(resp.email);
                         if(resp.email != "")
                         {
-                            AuthenticationService.SetCredentials(resp.email, "gmail");
                             $http.post('PHP/user_create.php', {'username' : resp.email, 'password' : "", 'email' : resp.email}
                                       ).success(function (data, status, headers, config) {
-                                $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/tracktime.html';
+                                AuthenticationService.Login(vm.username, md5.createHash("mysalt" + vm.password), function (response) {
+                                    if (response.success) {
+                                        $log.log("AuthenticationService success");
+                                        AuthenticationService.SetCredentials(vm.username, response.sessionkey);
+                                        //$location.path('/tracktime.html');
+                                        $log.log('http://' + $location.host() + ':' + $location.port() + '/tracktime.html');
+                                        $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/tracktime.html';
+                                    } else {
+                                        $log.log("AuthenticationService failed");
+                                        vm.dataLoading = false;
+                                    }
+                                });
                             });
-                            
+
                         }
                     })
-                });
+                });*/
 
             } else {
                 deferred.reject('error');

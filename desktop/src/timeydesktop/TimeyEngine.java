@@ -1,6 +1,9 @@
 package timeydesktop;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,8 +43,8 @@ public class TimeyEngine {
 	public static Instant TrackingLastSync = new Instant(Long.MIN_VALUE);
 	public static TimeyConfig config = new TimeyConfig();
 	public static String SessionToken = null;
-	//public static String ApiBase = "http://timey.it/PHP/";
-	public static String ApiBase = "http://localhost:1337/PHP/";
+	public static String TimeyBase = "http://localhost:1337";
+	public static String ApiBase = TimeyBase + "/PHP/";
 	protected TimeyEngine() {
 		// Exists only to defeat instantiation.
 	}
@@ -327,5 +330,21 @@ public class TimeyEngine {
 	{
 		System.out.println("Shutting down.");
 		System.exit(0);
+	}
+
+	public void OpenReportPage() {
+		
+		String url = TimeyEngine.TimeyBase + "/goto.html#?page=reporting.html&sessionkey=" + TimeyEngine.SessionToken;
+		System.out.println("Navigating to: " + url);
+		try {
+			java.awt.Desktop.getDesktop().browse(new URI(url));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
