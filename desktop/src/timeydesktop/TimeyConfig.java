@@ -27,7 +27,7 @@ public class TimeyConfig {
 				out.println("version=1.0");
 				out.println("username=empty");
 				out.println("password=empty");
-				
+				out.println("lastTracked=none");
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -55,12 +55,20 @@ public class TimeyConfig {
 		return getProperty("version");
 	}
 	
+	public String getLastTracked() throws IOException {
+		return getProperty("lastTracked");
+	}
+	
 	public boolean setUsername(String username) throws IOException {
 		return setProperty("username", username);
 	}
 	
 	public boolean setPassword(String password) throws IOException {
 		return setProperty("password", password);
+	}
+	
+	public boolean setLastTracked(String lastTracked) throws IOException {
+		return setProperty("lastTracked", lastTracked);
 	}
 	
 	public String getProperty(String propertyName) throws IOException {

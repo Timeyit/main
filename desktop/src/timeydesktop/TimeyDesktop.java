@@ -36,13 +36,18 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class TimeyDesktop {
 
+	static PopupMenu popup = new PopupMenu();
 	static MenuItem menuItemTimeyOnline = new MenuItem("Timey Online");
+	static Menu menuSettings = new Menu("Settings");
     static Menu menuTrack = new Menu("Track");
+    static MenuItem menuItemStopRestart = new MenuItem("Track: <no history>");
     static MenuItem menuItemForceSync = new MenuItem("Force Sync");
     static MenuItem menuItemLogOut = new MenuItem("Log Out");
     static MenuItem menuItemExit = new MenuItem("Exit");
     static Timer timeySyncTimer = new Timer();
     static TrayIcon trayIcon = null;
+    
+    static ActionListener listenerStopTracking;
     
 	public static void main(String[] args) throws IOException {
 		
@@ -69,6 +74,12 @@ public class TimeyDesktop {
 		        }
 		    };
 		    
+		    listenerStopTracking = new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		        	TimeyEngine.getInstance().StopTracking();
+		        }
+		    };
+		    
 		    ActionListener listenerForceSync = new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
 		        	TimeyEngine.getInstance().Sync();
@@ -86,30 +97,33 @@ public class TimeyDesktop {
 		        	LogOut();
 		        }
 		    };
-		    // create a popup menu
-		    PopupMenu popup = new PopupMenu();
-		    // create menu item for the default action
 		    
 		    // ---- MenuItem -> Timey Website
 		    menuItemTimeyOnline.addActionListener(listenerTimeyOnline);
 		    popup.add(menuItemTimeyOnline);
 		    
-		    // ---- Menu Item -> Track
-		    popup.add(menuTrack);
-		    // Populate submenu
-		    PopulateTrackMenu();
+		    // ---- MenuItem -> Settings
+		    popup.add(menuSettings);
 		    
 		    // ---- MenuItem -> Force Sync
 		    menuItemForceSync.addActionListener(listenerForceSync);
-		    popup.add(menuItemForceSync);
+		    menuSettings.add(menuItemForceSync);
 		    
-		 // ---- MenuItem -> Force Sync
+		    // ---- MenuItem -> Force Sync
 		    menuItemLogOut.addActionListener(listenerLogOut);
-		    popup.add(menuItemLogOut);
+		    menuSettings.add(menuItemLogOut);
 		    
 		    // ---- MenuItem -> Exit
 		    menuItemExit.addActionListener(listenerExit);
-		    popup.add(menuItemExit);
+		    menuSettings.add(menuItemExit);
+		    
+		    // ---- Menu Item -> Track
+		    popup.add(menuTrack);
+		    popup.add(menuItemStopRestart);
+		    // Populate submenu
+		    PopulateTrackMenu();
+		    
+		    
 		    
 		    
 		    // construct a TrayIcon
@@ -150,8 +164,54 @@ public class TimeyDesktop {
 		timeySyncTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.SyncTime, TimeyEngine.Options.SyncTime);
 	}
 	
-	private static void PopulateTrackMenu()
+	public static void PopulateTrackMenu()
 	{
+		System.out.println("PopulateTrackMenu() called");
+		popup.remove(menuItemStopRestart);
+		if(TimeyEngine.IsTracking)
+		{
+			menuItemStopRestart = new MenuItem("Stop Tracking");
+			menuItemStopRestart.addActionListener(listenerStopTracking);
+			popup.add(menuItemStopRestart);
+		}
+		else
+		{
+			TimeyConfig config = new TimeyConfig();
+			try {
+				final String idtotrack = config.getLastTracked();
+				System.out.println("Id last tracked: " + idtotrack);
+				// See if id exists.
+				String workItemName = null; 
+				for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
+		        	final WorkItem item = i.next();
+		        	if(item.idworkItem.equals(idtotrack))
+		        	{
+		        		workItemName = item.nameWorkItem;
+		        	}
+				}
+				
+				if(workItemName != null)
+				{
+					System.out.println("Name last tracked: " + workItemName);
+					menuItemStopRestart = new MenuItem("Track: " + workItemName);
+					ActionListener listenerTrackItem = new ActionListener() {
+				        public void actionPerformed(ActionEvent e) {
+				        	System.out.println("Id last tracked (starting): " + idtotrack);
+				        	TimeyEngine.getInstance().StartTracking(idtotrack);
+				        }
+				    };
+					menuItemStopRestart.addActionListener(listenerTrackItem);
+					popup.add(menuItemStopRestart);
+				}
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
 		menuTrack.removeAll();
 		for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
         	final WorkItem item = i.next();
@@ -257,7 +317,7 @@ public class TimeyDesktop {
 				    if (reply == JOptionPane.YES_OPTION) {
 				    	String uname = username.getText();
 					    String pwd = new String(password.getPassword());
-					    pwd = md5("mysalt" + pwd);
+					    pwd = Helper.md5("mysalt" + pwd);
 					    properties.setUsername(uname);
 					    properties.setPassword(pwd);
 			        }
@@ -277,34 +337,5 @@ public class TimeyDesktop {
 		}
 		
 	}
-	public static String md5(String input) {
-		
-		String md5 = null;
-		
-		if(null == input) return null;
-		
-		try {
-			
-		//Create MessageDigest object for MD5
-		MessageDigest digest = MessageDigest.getInstance("MD5");
-		
-		//Update input string in message digest
-		try {
-			digest.update(input.getBytes("UTF-8"), 0, input.length());
-			//Converts message digest value in base 16 (hex) 
-			md5 = new BigInteger(1, digest.digest()).toString(16);
-			while(md5.length() < 32)
-			{
-				md5 = "0" + md5;
-			}
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		} catch (NoSuchAlgorithmException e) {
-
-			e.printStackTrace();
-		}
-		return md5;
-	}
+	
 }

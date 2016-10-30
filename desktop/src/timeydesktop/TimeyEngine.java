@@ -65,6 +65,7 @@ public class TimeyEngine {
 		TrackingLastSync = new Instant(Long.MIN_VALUE);
 		IsTracking = false;
 		trackTimer.cancel();
+		TimeyDesktop.PopulateTrackMenu();
 	}
 	
 	public void KeepTracking()
@@ -76,16 +77,22 @@ public class TimeyEngine {
 	
 	public void StartTracking(String idWorkItem)
 	{
-		
 		for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
         	final WorkItem item = i.next();
-        	if(item.idworkItem == idWorkItem)
+        	if(item.idworkItem.equals(idWorkItem))
         	{
         		TrackedItem = item;
         	}
 		}
 		
-		System.out.println("Now Tracking: " + TrackedItem.nameWorkItem);
+		try {
+			config.setLastTracked(TrackedItem.idworkItem);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("Now Tracking: " + TrackedItem.nameWorkItem + " id: " + TrackedItem.idworkItem);
 		TrackingStartTime = new Instant();
 		TrackingLastSync = new Instant();
 		ShowTrackStartPopup(TrackedItem.nameWorkItem);
@@ -98,7 +105,9 @@ public class TimeyEngine {
 	        }
 	    };
 	    
+	    trackTimer = new Timer();
 		trackTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.AlarmTimeMS1, TimeyEngine.Options.AlarmTimeMS1);
+		TimeyDesktop.PopulateTrackMenu();
 	}
 	
 	public String GetLatestVersion()
@@ -192,7 +201,7 @@ public class TimeyEngine {
 		}
 		else
 		{
-			System.out.println("Not tracking time");
+			//System.out.println("Not tracking time");
 		}
 		WorkItems = GetWorkItems();
 	}
@@ -201,7 +210,7 @@ public class TimeyEngine {
 	{
 		try
 		{
-			System.out.println("Getting work items");
+			//System.out.println("Getting work items");
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(ApiBase + "workItem_getAll.php");
 
