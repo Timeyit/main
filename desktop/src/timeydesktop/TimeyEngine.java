@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.Instant;
@@ -46,6 +47,7 @@ public class TimeyEngine {
 	public static String SessionToken = null;
 	public static String TimeyBase = "http://localhost:1337";
 	public static String ApiBase = TimeyBase + "/PHP/";
+	public static long IDTimeLog = -1;
 
 	protected TimeyEngine() {
 		// Exists only to defeat instantiation.
@@ -62,6 +64,7 @@ public class TimeyEngine {
 		System.out.println("Stop Tracking");
 		TrackedItem = new WorkItem();
 		NumAlarams = 0;
+		IDTimeLog = -1;
 		TrackingStartTime = new Instant(Long.MIN_VALUE);
 		TrackingLastSync = new Instant(Long.MIN_VALUE);
 		IsTracking = false;
@@ -252,17 +255,29 @@ public class TimeyEngine {
 	}
 
 	public boolean UploadTrackedTime() {
+		
 		Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
 		long duration = timeSinceStart.toDuration().getStandardSeconds();
 		duration = duration + TrackedItem.GetDurationLong();
+		
+		Interval timeSinceLastSync = new Interval(TrackingLastSync, new Instant());
+		long durationSinceLastSync = timeSinceLastSync.toDuration().getStandardSeconds();
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Update work item main
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 		try {
-			System.out.println("Uploading tracked time");
+			System.out.println("Uploading tracked time (Main)");
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(ApiBase + "workItem_update.php");
 
 			// Request parameters and other properties.
-			String requestJSON = "{" + "\"idworkItem\":\"" + TrackedItem.idworkItem + "\"," + "\"duration\":"
-					+ Long.toString(duration) + "\"sessionkey\":\"" + SessionToken + "\"" + "} ";
+			String requestJSON = "{" + 
+					"\"idworkItem\":\"" + TrackedItem.idworkItem + "\"," +
+					"\"duration\":" + "\"" + Long.toString(duration) + "\"" + "," +
+					"\"sessionkey\":\"" + SessionToken + "\"" +
+					"} ";
 			System.out.println("Request JSON: " + requestJSON);
 			StringEntity params = new StringEntity(requestJSON);
 			httppost.addHeader("content-type", "application/json");
@@ -277,12 +292,55 @@ public class TimeyEngine {
 				String jsonData = IOUtils.toString(instream, "UTF-8");
 				instream.close();
 				System.out.println("Response JSON: " + jsonData);
-				return true;
+				
 			}
 		} catch (Exception ex) {
 			System.out.println("Failure...");
+			return false;
 		}
-		return false;
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Update lap tracking
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		try {
+			System.out.println("Uploading tracked time (LAP)");
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(ApiBase + "timeLog_updateCreate.php");
+
+			// Request parameters and other properties.
+			String requestJSON = "{" + 
+					"\"idworkItem\":\"" + TrackedItem.idworkItem + "\"," +
+					"\"durationLap\":" + "\"" + Long.toString(durationSinceLastSync) + "\"" + "," +
+					"\"idTimeLog\":" + "\"" + Long.toString(IDTimeLog) + "\"" + "," +
+					"\"sessionkey\":\"" + SessionToken + "\"" +
+					"} ";
+			System.out.println("Request JSON: " + requestJSON);
+			StringEntity params = new StringEntity(requestJSON);
+			httppost.addHeader("content-type", "application/json");
+			httppost.setEntity(params);
+
+			// Execute and get the response.
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+				InputStream instream = entity.getContent();
+				String jsonData = IOUtils.toString(instream, "UTF-8");
+				if(IDTimeLog < 0)
+				{
+					// BAD SOLUTION FOR DESERIALIZING, BUT LETS USE FOR NOW
+					String timeIdString = jsonData.replace("[{\"myid\":\"", "").replace("\"}]", "");
+					IDTimeLog = Long.parseLong(timeIdString); 
+				}
+				instream.close();
+				System.out.println("Response JSON: " + jsonData);
+			}
+		} catch (Exception ex) {
+			System.out.println("Failure...");
+			return false;
+		}
+		
+		return true;
 	}
 
 	public void ShowReminderPopup() {
