@@ -20,9 +20,9 @@ $(document).ready(collapseNavbar);
 $(function() {
     $('a.page-scroll').bind('click', function(event) {
         var $anchor = $(this);
-        var target = this.hash,
-            $target = $(target);
-        if(typeof $($anchor.attr('href')).offset().top !== 'undefined')
+        var target = this.hash;
+        $target = $(target);
+        if(typeof $($anchor.attr('href')).offset() !== 'undefined')
         {
             $('html, body').stop().animate({
                 scrollTop: $($anchor.attr('href')).offset().top

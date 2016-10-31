@@ -37,7 +37,7 @@ angular.module('myApp')
 
     $scope.getAll = function()
     {
-        $http.post('PHP/timeLog_getTimeLog.php', {'sessionkey' : $scope.sessionkey}
+        $http.post('PHP/timeLog_getTimeLog.php', {'sessionkey' : AuthenticationService.GetSessionKey()}
                   ).success(function (data, status, headers, config) {
             $scope.myData = [];
             $scope.myDataAllDays = [];
