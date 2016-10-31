@@ -28,6 +28,9 @@ public class TimeyConfig {
 				out.println("username=empty");
 				out.println("password=empty");
 				out.println("lastTracked=none");
+				out.println("trackNotificationDelay=300");
+				out.println("showNoTrackingNotifications=true");
+				out.println("noTrackingNotificationDelay=300");
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -59,6 +62,18 @@ public class TimeyConfig {
 		return getProperty("lastTracked");
 	}
 	
+	public int getTrackNotificationDelay() throws IOException {
+		return Integer.parseInt(getProperty("trackNotificationDelay"));
+	}
+	
+	public boolean getShowNoTrackingNotifications() throws IOException {
+		return Boolean.parseBoolean(getProperty("showNoTrackingNotifications"));
+	}
+	
+	public int getNoTrackingNotificationDelay() throws IOException {
+		return Integer.parseInt(getProperty("noTrackingNotificationDelay"));
+	}
+	
 	public boolean setUsername(String username) throws IOException {
 		return setProperty("username", username);
 	}
@@ -69,6 +84,18 @@ public class TimeyConfig {
 	
 	public boolean setLastTracked(String lastTracked) throws IOException {
 		return setProperty("lastTracked", lastTracked);
+	}
+	
+	public boolean setTrackNotificationDelay(int trackNotificationDelay) throws IOException {
+		return setProperty("trackNotificationDelay", Integer.toString(trackNotificationDelay));
+	}
+	
+	public boolean setShowNoTrackingNotifications(boolean showNoTrackingNotifications) throws IOException {
+		return setProperty("showNoTrackingNotifications", Boolean.toString(showNoTrackingNotifications));
+	}
+	
+	public boolean setNoTrackingNotificationDelay(int noTrackingNotificationDelay) throws IOException {
+		return setProperty("noTrackingNotificationDelay", Integer.toString(noTrackingNotificationDelay));
 	}
 	
 	public String getProperty(String propertyName) throws IOException {
