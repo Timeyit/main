@@ -19,13 +19,17 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import timeydesktop.TimeyDesktop;
 
 /**
  * A simple round close button.
@@ -69,11 +73,11 @@ public class RoundCloseButton implements ICloseButton {
 		fStroke = new BasicStroke(STROKE_WIDTH);
 		fButtonBackgroundColor = buttonBackgroundColor;
 		fButtonBorderColor = buttonBorderColor;
-		try {
-			fDropShadow = ImageIO.read(RoundCloseButton.class.getResourceAsStream("/ch/swingfx/twinkle/style/closebutton/resources/roundCloseButtonDropShadow.png"));
+		/*try {
+			//fDropShadow = ImageIO.read(TimeyDesktop.class.getClassLoader().getResource("roundCloseButtonDropShadow.png"));
 		} catch (IOException e) {
 			// don't show the drop shadow
-		}
+		}*/
 	}
 	
 	public void paintCloseButton(Graphics g) {

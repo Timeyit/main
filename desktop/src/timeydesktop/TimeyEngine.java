@@ -45,7 +45,7 @@ public class TimeyEngine {
 	public static Instant TrackingLastSync = new Instant(Long.MIN_VALUE);
 	public static TimeyConfig config = new TimeyConfig();
 	public static String SessionToken = null;
-	public static String TimeyBase = "http://localhost:1337";
+	public static String TimeyBase = "http://timey.it";
 	public static String ApiBase = TimeyBase + "/PHP/";
 	public static long IDTimeLog = -1;
 
