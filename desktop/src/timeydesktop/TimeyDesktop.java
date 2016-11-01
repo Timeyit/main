@@ -26,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 public class TimeyDesktop {
@@ -306,12 +308,29 @@ public class TimeyDesktop {
 				TimeyEngine.getInstance().OpenSession();
 				if(TimeyEngine.SessionKey == null)
 				{
+					try {
+						UIManager.setLookAndFeel(
+						        UIManager.getSystemLookAndFeelClassName());
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (UnsupportedLookAndFeelException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 					// Prompt for username & password
 					JPanel panel = new JPanel(new BorderLayout(5, 5));
 	
 				    JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
-				    label.add(new JLabel("Username", SwingConstants.RIGHT));
-				    label.add(new JLabel("Password", SwingConstants.RIGHT));
+				    label.add(new JLabel("Username: ", SwingConstants.RIGHT));
+				    label.add(new JLabel("Password: ", SwingConstants.RIGHT));
 				    panel.add(label, BorderLayout.WEST);
 	
 				    JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
@@ -320,8 +339,8 @@ public class TimeyDesktop {
 				    JPasswordField password = new JPasswordField();
 				    controls.add(password);
 				    panel.add(controls, BorderLayout.CENTER);
-	
-				    int reply = JOptionPane.showConfirmDialog(null, panel, "login", JOptionPane.OK_CANCEL_OPTION);
+				    	
+				    int reply = JOptionPane.showConfirmDialog(null, panel, "Timey Login", JOptionPane.OK_CANCEL_OPTION);
 				    if (reply == JOptionPane.YES_OPTION) {
 				    	String uname = username.getText();
 					    String pwd = new String(password.getPassword());

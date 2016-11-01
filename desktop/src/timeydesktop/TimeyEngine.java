@@ -126,7 +126,7 @@ public class TimeyEngine {
 				ShowReminderPopup();
 			}
 		};
-
+		trackTimer.cancel();
 		trackTimer = new Timer();
 		try {
 			trackTimer.scheduleAtFixedRate(timerTask, config.getTrackNotificationDelay() * 1000,
