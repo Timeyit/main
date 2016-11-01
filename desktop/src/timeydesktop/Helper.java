@@ -28,12 +28,11 @@ public class Helper {
 				md5 = "0" + md5;
 			}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TimeyLog.LogException("Failed to generate MD5 hash", e);
 		}
 		} catch (NoSuchAlgorithmException e) {
 
-			e.printStackTrace();
+			TimeyLog.LogException("Failed to generate MD5 hash", e);
 		}
 		return md5;
 	}

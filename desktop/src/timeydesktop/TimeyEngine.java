@@ -18,7 +18,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.Instant;
@@ -61,7 +60,7 @@ public class TimeyEngine {
 	}
 
 	public void StopTracking() {
-		System.out.println("Stop Tracking");
+		TimeyLog.LogInfo("StopTracking");
 		TrackedItem = new WorkItem();
 		NumAlarams = 0;
 		IDTimeLog = -1;
@@ -83,25 +82,24 @@ public class TimeyEngine {
 					trackTimer.scheduleAtFixedRate(timerTask, config.getNoTrackingNotificationDelay() * 1000,
 							config.getNoTrackingNotificationDelay() * 1000);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					TimeyLog.LogException("Failed to start track remainder popup", e);
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TimeyLog.LogException("Failed to stop tracking", e);
 		}
 
 		TimeyDesktop.PopulateTrackMenu();
 	}
 
 	public void KeepTracking() {
-		System.out.println("Keep Tracking");
+		TimeyLog.LogInfo("Keep Tracking");
 		NumAlarams = NumAlarams + 1;
 		IsTracking = true;
 	}
 
 	public void StartTracking(String idWorkItem) {
+		TimeyLog.LogInfo("Start Tracking");
 		for (Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext();) {
 			final WorkItem item = i.next();
 			if (item.idworkItem.equals(idWorkItem)) {
@@ -115,8 +113,7 @@ public class TimeyEngine {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		System.out.println("Now Tracking: " + TrackedItem.nameWorkItem + " id: " + TrackedItem.idworkItem);
+		TimeyLog.LogInfo("Now Tracking: " + TrackedItem.nameWorkItem + " id: " + TrackedItem.idworkItem);
 		TrackingStartTime = new Instant();
 		TrackingLastSync = new Instant();
 		ShowTrackStartPopup(TrackedItem.nameWorkItem);
@@ -134,8 +131,7 @@ public class TimeyEngine {
 			trackTimer.scheduleAtFixedRate(timerTask, config.getTrackNotificationDelay() * 1000,
 					config.getTrackNotificationDelay() * 1000);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TimeyLog.LogException("Failed to start task timer", e);
 		}
 		TimeyDesktop.PopulateTrackMenu();
 	}
@@ -153,26 +149,26 @@ public class TimeyEngine {
 				InputStream instream = entity.getContent();
 				String jsonData = IOUtils.toString(instream, "UTF-8");
 				instream.close();
-				System.out.println("Got data: " + jsonData);
+				TimeyLog.LogFine("Got data: " + jsonData);
 
 				return jsonData;
 			}
 		} catch (Exception ex) {
-			// Do nothing for now
+			TimeyLog.LogException("Failed to get latest Timey version", ex);
 		}
 		return "0.0";
 	}
 
 	public String OpenSession() {
 		try {
-			System.out.println("Opening Session");
+			TimeyLog.LogInfo("Opening Session");
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(ApiBase + "session_createSession.php");
 
 			// Request parameters and other properties.
 			String requestJSON = "{\"username\":\"" + config.getUsername() + "\",\"password\":\"" + config.getPassword()
 					+ "\"} ";
-			System.out.println("Request JSON: " + requestJSON);
+			TimeyLog.LogFine("Request JSON: " + requestJSON);
 			StringEntity params = new StringEntity(requestJSON);
 			httppost.addHeader("content-type", "application/json");
 			httppost.setEntity(params);
@@ -195,7 +191,7 @@ public class TimeyEngine {
 
 			}
 		} catch (Exception ex) {
-			System.out.println("Failure...");
+			TimeyLog.LogException("Failed to open Timey session", ex);
 		}
 		return null;
 	}
@@ -208,15 +204,14 @@ public class TimeyEngine {
 		if (IsTracking) {
 			Interval timeSinceLastSync = new Interval(TrackingLastSync, new Instant());
 			Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
-			System.out
-					.println("Time Since Last Sync: " + (double) timeSinceLastSync.toDurationMillis() / (double) 1000);
-			System.out.println("Time Since Last Start: " + (double) timeSinceStart.toDurationMillis() / (double) 1000);
+			TimeyLog.LogFine("Time Since Last Sync: " + (double) timeSinceLastSync.toDurationMillis() / (double) 1000);
+			TimeyLog.LogFine("Time Since Last Start: " + (double) timeSinceStart.toDurationMillis() / (double) 1000);
 			if (UploadTrackedTime()) {
 				TrackingLastSync = new Instant();
 			}
 
 		} else {
-			// System.out.println("Not tracking time");
+			TimeyLog.LogFine("Not tracking time");
 		}
 		WorkItems = GetWorkItems();
 	}
@@ -249,7 +244,7 @@ public class TimeyEngine {
 				return workItems;
 			}
 		} catch (Exception ex) {
-			System.out.println("Failure...");
+			TimeyLog.LogException("Failed to get work items", ex);
 		}
 		return new ArrayList<WorkItem>();
 	}
@@ -268,7 +263,7 @@ public class TimeyEngine {
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		try {
-			System.out.println("Uploading tracked time (Main)");
+			TimeyLog.LogInfo("Uploading tracked time (Main)");
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(ApiBase + "workItem_update.php");
 
@@ -278,7 +273,7 @@ public class TimeyEngine {
 					"\"duration\":" + "\"" + Long.toString(duration) + "\"" + "," +
 					"\"sessionkey\":\"" + SessionToken + "\"" +
 					"} ";
-			System.out.println("Request JSON: " + requestJSON);
+			TimeyLog.LogFine("Request JSON: " + requestJSON);
 			StringEntity params = new StringEntity(requestJSON);
 			httppost.addHeader("content-type", "application/json");
 			httppost.setEntity(params);
@@ -291,11 +286,11 @@ public class TimeyEngine {
 				InputStream instream = entity.getContent();
 				String jsonData = IOUtils.toString(instream, "UTF-8");
 				instream.close();
-				System.out.println("Response JSON: " + jsonData);
+				TimeyLog.LogFine("Response JSON: " + jsonData);
 				
 			}
 		} catch (Exception ex) {
-			System.out.println("Failure...");
+			TimeyLog.LogException("Failed to update work item time", ex);
 			return false;
 		}
 		
@@ -303,7 +298,8 @@ public class TimeyEngine {
 		// Update lap tracking
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		try {
-			System.out.println("Uploading tracked time (LAP)");
+			
+			TimeyLog.LogInfo("Uploading tracked time (LAP)");
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(ApiBase + "timeLog_updateCreate.php");
 
@@ -314,7 +310,7 @@ public class TimeyEngine {
 					"\"idTimeLog\":" + "\"" + Long.toString(IDTimeLog) + "\"" + "," +
 					"\"sessionkey\":\"" + SessionToken + "\"" +
 					"} ";
-			System.out.println("Request JSON: " + requestJSON);
+			TimeyLog.LogFine("Request JSON: " + requestJSON);
 			StringEntity params = new StringEntity(requestJSON);
 			httppost.addHeader("content-type", "application/json");
 			httppost.setEntity(params);
@@ -333,10 +329,10 @@ public class TimeyEngine {
 					IDTimeLog = Long.parseLong(timeIdString); 
 				}
 				instream.close();
-				System.out.println("Response JSON: " + jsonData);
+				TimeyLog.LogFine("Response JSON: " + jsonData);
 			}
 		} catch (Exception ex) {
-			System.out.println("Failure...");
+			TimeyLog.LogException("Failed to update lap time tracking", ex);
 			return false;
 		}
 		
@@ -344,6 +340,7 @@ public class TimeyEngine {
 	}
 
 	public void ShowReminderPopup() {
+		TimeyLog.LogInfo("Showing reminder Popup. Item: " + TimeyEngine.TrackedItem.nameWorkItem);
 		Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
 		int TimeStartSec = (int) Math.round((double) timeSinceStart.toDurationMillis() / (double) 1000);
 		// First we define the style/theme of the window.
@@ -381,6 +378,8 @@ public class TimeyEngine {
 	}
 
 	public void ShowNoTrackingReminderPopup() {
+		TimeyLog.LogInfo("Showing tracking reminder popup");
+		
 		// First we define the style/theme of the window.
 		// Note how we override the default values
 		INotificationStyle style = new LightDefaultNotification().withWidth(400) // Optional
@@ -401,6 +400,7 @@ public class TimeyEngine {
 	}
 
 	public void ShowTrackStartPopup(String taskName) {
+		TimeyLog.LogInfo("Showing start tracking popup. Item: " + taskName);
 		// First we define the style/theme of the window.
 		// Note how we override the default values
 		INotificationStyle style = new DarkDefaultNotification().withWidth(400) // Optional
@@ -423,22 +423,20 @@ public class TimeyEngine {
 	}
 
 	public void CloseApplication() {
-		System.out.println("Shutting down.");
+		TimeyLog.LogInfo("Closing application");
 		System.exit(0);
 	}
 
 	public void OpenReportPage() {
-
+		TimeyLog.LogInfo("Opening report page");
 		String url = TimeyEngine.TimeyBase + "/goto.html#?page=reporting.html&sessionkey=" + TimeyEngine.SessionToken;
-		System.out.println("Navigating to: " + url);
+		TimeyLog.LogInfo("Navigating to: " + url);
 		try {
 			java.awt.Desktop.getDesktop().browse(new URI(url));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TimeyLog.LogException("Failed to open report page", e);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TimeyLog.LogException("Failed to open report page", e);
 		}
 
 	}

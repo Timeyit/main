@@ -32,8 +32,7 @@ public class TimeyConfig {
 				out.println("showNoTrackingNotifications=true");
 				out.println("noTrackingNotificationDelay=300");
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				TimeyLog.LogException("Failed to instansiate TimeyConfig", e);
 			} finally
 			{
 				out.close();
@@ -114,7 +113,7 @@ public class TimeyConfig {
 			// get the property value and print it out
 			return prop.getProperty(propertyName);
 		} catch (Exception e) {
-			System.out.println("Exception: " + e);
+			TimeyLog.LogException("Failed to get configuration property", e);
 		} finally {
 			inputStream.close();
 		}
@@ -142,7 +141,7 @@ public class TimeyConfig {
 			out.close();
 			return true;
 		} catch (Exception e) {
-			System.out.println("Exception: " + e);
+			TimeyLog.LogException("Failed to set configuration property", e);
 		} finally {
 			
 		}

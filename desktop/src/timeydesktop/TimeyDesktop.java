@@ -14,12 +14,8 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,8 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 
 public class TimeyDesktop {
@@ -50,6 +44,8 @@ public class TimeyDesktop {
     static ActionListener listenerStopTracking;
     
 	public static void main(String[] args) throws IOException {
+		
+		TimeyLog.LogInfo("Starting Timey");
 		
 		// AA the text
 		System.setProperty("swing.aatext", "true");
@@ -166,7 +162,7 @@ public class TimeyDesktop {
 	
 	public static void PopulateTrackMenu()
 	{
-		System.out.println("PopulateTrackMenu() called");
+		TimeyLog.LogFine("Populating TrackMenu");
 		popup.remove(menuItemStopRestart);
 		if(TimeyEngine.IsTracking)
 		{
@@ -232,7 +228,7 @@ public class TimeyDesktop {
 	
 	public static void LogOut()
 	{
-		System.out.println("Logging out");
+		TimeyLog.LogInfo("Logging Out");
 		try
 		{
 			TimeyConfig properties = new TimeyConfig();
@@ -245,19 +241,21 @@ public class TimeyDesktop {
 		}
 		catch(IOException ex)
 		{
-			System.err.println("Error logging out. Exiting");
+			TimeyLog.LogSevere("Error logging out. Force exit");
 			System.exit(0);
 		}
 	}
 	
 	public static void CheckVersion()
 	{
+		TimeyLog.LogInfo("Checking version");
 		try
 		{
 			TimeyConfig properties = new TimeyConfig();
 			// Verify that we have the right version of the api
-	
-			if(!properties.getVersion().equals(TimeyEngine.getInstance().GetLatestVersion()))
+			String serverVersion = TimeyEngine.getInstance().GetLatestVersion();
+			TimeyLog.LogInfo("Server version = " + serverVersion + ". Desktop version = " + properties.getVersion() + ".");
+			if(!properties.getVersion().equals(serverVersion))
 			{
 				String message = "There is a new Timey version available. Download now?";
 			    String title = "Download new version?";
@@ -283,12 +281,14 @@ public class TimeyDesktop {
 	
 	public static void HandleLogin()
 	{
+		
 		try
 		{
 			TimeyConfig properties = new TimeyConfig();
 			int tries = 0;
 			while(TimeyEngine.SessionToken == null)
 			{
+				TimeyLog.LogInfo("Handle Login. Attempt #" + tries);
 				tries++;
 				if(tries > 3)
 				{
@@ -332,7 +332,7 @@ public class TimeyDesktop {
 		}
 		catch(IOException ex)
 		{
-			System.err.println("Error logging in. Exiting");
+			TimeyLog.LogSevere("Error logging in. Exiting");
 			System.exit(0);
 		}
 		
