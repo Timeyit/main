@@ -67,7 +67,9 @@ public class TimeyEngine {
 
 				trackTimer = new Timer();
 				try {
-					trackTimer.scheduleAtFixedRate(timerTask, config.getNoTrackingNotificationDelay() * 1000,
+					trackTimer.scheduleAtFixedRate(
+							timerTask, 
+							config.getNoTrackingNotificationDelay() * 1000,
 							config.getNoTrackingNotificationDelay() * 1000);
 				} catch (IOException e) {
 					TimeyLog.LogException("Failed to start track remainder popup", e);

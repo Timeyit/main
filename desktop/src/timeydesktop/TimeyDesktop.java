@@ -159,7 +159,11 @@ public class TimeyDesktop {
 	        }
 	    };
 	    
-		timeySyncTimer.scheduleAtFixedRate(timerTask, TimeyEngine.config.getSyncDelay() , TimeyEngine.config.getSyncDelay());
+		timeySyncTimer.scheduleAtFixedRate(
+				timerTask,
+				TimeyEngine.config.getSyncDelay() * 1000,
+				TimeyEngine.config.getSyncDelay() * 1000
+				);
 		
 		// Start by stopping the current tracking to trigger notifications.
 		TimeyEngine.getInstance().StopTracking();
