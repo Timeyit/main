@@ -63,9 +63,6 @@ import ch.swingfx.window.translucentandshaped.TranslucentAndShapedWindowApiFacto
  *
  */
 public class NotificationBuilder {
-	/** version of the library */
-	private static final int version = 100;
-
 	/**Duration of the fade in animation in milliseconds */
 	private static final int ANIMATION_FADE_IN_DURATION = 800;
 	/**Duration of the fade out animation in milliseconds */

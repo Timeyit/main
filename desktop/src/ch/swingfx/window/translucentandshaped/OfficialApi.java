@@ -54,8 +54,7 @@ public class OfficialApi implements ITranslucentAndShapedWindowApi {
 	
 	static {
 		try {
-			@SuppressWarnings("rawtypes")
-			Class translucencyClass = Class.forName("java.awt.GraphicsDevice$WindowTranslucency");
+			Class<?> translucencyClass = Class.forName("java.awt.GraphicsDevice$WindowTranslucency");
 
 			// methods and enums of WindowTranslucency
 			Method valueOf = translucencyClass.getMethod("valueOf", String.class);

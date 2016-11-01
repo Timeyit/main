@@ -53,10 +53,8 @@ public class PrivateApi implements ITranslucentAndShapedWindowApi {
 	static {
 		try {
 			// classes we wrap
-			@SuppressWarnings("rawtypes")
-			Class awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
-			@SuppressWarnings("rawtypes")
-			Class translucencyClass = Class.forName("com.sun.awt.AWTUtilities$Translucency");
+			Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
+			Class<?> translucencyClass = Class.forName("com.sun.awt.AWTUtilities$Translucency");
 			
 			// methods and enums of Translucency
 			Method valueOf = translucencyClass.getMethod("valueOf", String.class);

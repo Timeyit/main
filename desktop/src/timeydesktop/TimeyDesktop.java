@@ -158,72 +158,80 @@ public class TimeyDesktop {
 	    };
 	    
 		timeySyncTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.SyncTime, TimeyEngine.Options.SyncTime);
+		
+		// Start by stopping the current tracking to trigger notifications.
+		TimeyEngine.getInstance().StopTracking();
 	}
 	
 	public static void PopulateTrackMenu()
 	{
 		TimeyLog.LogFine("Populating TrackMenu");
-		popup.remove(menuItemStopRestart);
-		if(TimeyEngine.IsTracking)
+		
+		if(TimeyEngine.getInstance().RefreshSession())
 		{
-			menuItemStopRestart = new MenuItem("Stop Tracking");
-			menuItemStopRestart.addActionListener(listenerStopTracking);
-			popup.add(menuItemStopRestart);
-		}
-		else
-		{
-			TimeyConfig config = new TimeyConfig();
-			try {
-				final String idtotrack = config.getLastTracked();
-				System.out.println("Id last tracked: " + idtotrack);
-				// See if id exists.
-				String workItemName = null; 
-				for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
-		        	final WorkItem item = i.next();
-		        	if(item.idworkItem.equals(idtotrack))
-		        	{
-		        		workItemName = item.nameWorkItem;
-		        	}
+			popup.remove(menuItemStopRestart);
+			if(TimeyEngine.IsTracking)
+			{
+				menuItemStopRestart = new MenuItem("Stop Tracking");
+				menuItemStopRestart.addActionListener(listenerStopTracking);
+				popup.add(menuItemStopRestart);
+			}
+			else
+			{
+				TimeyConfig config = new TimeyConfig();
+				try {
+					final String idtotrack = config.getLastTracked();
+					System.out.println("Id last tracked: " + idtotrack);
+					// See if id exists.
+					String workItemName = null; 
+					for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
+			        	final WorkItem item = i.next();
+			        	if(item.idworkItem.equals(idtotrack))
+			        	{
+			        		workItemName = item.nameWorkItem;
+			        	}
+					}
+					
+					if(workItemName != null)
+					{
+						System.out.println("Name last tracked: " + workItemName);
+						menuItemStopRestart = new MenuItem("Track: " + workItemName);
+						ActionListener listenerTrackItem = new ActionListener() {
+					        public void actionPerformed(ActionEvent e) {
+					        	System.out.println("Id last tracked (starting): " + idtotrack);
+					        	TimeyEngine.getInstance().StartTracking(idtotrack);
+					        }
+					    };
+						menuItemStopRestart.addActionListener(listenerTrackItem);
+						popup.add(menuItemStopRestart);
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
-				if(workItemName != null)
-				{
-					System.out.println("Name last tracked: " + workItemName);
-					menuItemStopRestart = new MenuItem("Track: " + workItemName);
-					ActionListener listenerTrackItem = new ActionListener() {
-				        public void actionPerformed(ActionEvent e) {
-				        	System.out.println("Id last tracked (starting): " + idtotrack);
-				        	TimeyEngine.getInstance().StartTracking(idtotrack);
-				        }
-				    };
-					menuItemStopRestart.addActionListener(listenerTrackItem);
-					popup.add(menuItemStopRestart);
-				}
 				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			
-			
+			menuTrack.removeAll();
+			for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
+	        	final WorkItem item = i.next();
+	        	
+	        	ActionListener listenerTrackItem = new ActionListener() {
+			        public void actionPerformed(ActionEvent e) {
+			        	TimeyEngine.getInstance().StartTracking(item.idworkItem);
+			        }
+			    };
+			    
+			    //System.out.println(item.nameWorkItem + " - " + item.idworkItem + " - " + item.duration);
+	        	MenuItem trackItem = new MenuItem(item.nameWorkItem + " (" + item.duration + ")");
+	        	trackItem.addActionListener(listenerTrackItem);
+	        	menuTrack.add(trackItem);
+	            //System.out.println(item.nameWorkItem);
+	        }
 		}
 		
-		menuTrack.removeAll();
-		for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
-        	final WorkItem item = i.next();
-        	
-        	ActionListener listenerTrackItem = new ActionListener() {
-		        public void actionPerformed(ActionEvent e) {
-		        	TimeyEngine.getInstance().StartTracking(item.idworkItem);
-		        }
-		    };
-		    
-		    //System.out.println(item.nameWorkItem + " - " + item.idworkItem + " - " + item.duration);
-        	MenuItem trackItem = new MenuItem(item.nameWorkItem + " (" + item.duration + ")");
-        	trackItem.addActionListener(listenerTrackItem);
-        	menuTrack.add(trackItem);
-            //System.out.println(item.nameWorkItem);
-        }
 	}
 	
 	public static void LogOut()
@@ -236,7 +244,7 @@ public class TimeyDesktop {
 	
 			properties.setPassword("");
 			properties.setUsername("");
-			TimeyEngine.SessionToken = null;
+			TimeyEngine.SessionKey = null;
 			HandleLogin();
 		}
 		catch(IOException ex)
@@ -286,7 +294,7 @@ public class TimeyDesktop {
 		{
 			TimeyConfig properties = new TimeyConfig();
 			int tries = 0;
-			while(TimeyEngine.SessionToken == null)
+			while(TimeyEngine.SessionKey == null)
 			{
 				TimeyLog.LogInfo("Handle Login. Attempt #" + tries);
 				tries++;
@@ -296,7 +304,7 @@ public class TimeyDesktop {
 				}
 				
 				TimeyEngine.getInstance().OpenSession();
-				if(TimeyEngine.SessionToken == null)
+				if(TimeyEngine.SessionKey == null)
 				{
 					// Prompt for username & password
 					JPanel panel = new JPanel(new BorderLayout(5, 5));

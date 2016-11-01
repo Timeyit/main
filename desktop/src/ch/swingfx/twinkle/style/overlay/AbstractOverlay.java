@@ -38,6 +38,8 @@ public abstract class AbstractOverlay implements IOverlay {
 			case MOUSE_OVER:
 				paintMouseOver(g, cornerRadius);
 				break;
+		default:
+			break;
 		}
 		fDecorator.paintOverlayMouseOver(g, cornerRadius);
 	}
@@ -47,6 +49,8 @@ public abstract class AbstractOverlay implements IOverlay {
 		case ALWAYS:
 		case MOUSE_OUT:
 			paintMouseOut(g, cornerRadius);
+			break;
+		default:
 			break;
 		}
 		fDecorator.paintOverlayMouseOut(g, cornerRadius);
