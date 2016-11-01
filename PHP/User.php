@@ -98,10 +98,8 @@ class User {
         }
         else
         {
-            //echo "SQL ERROR Creating User in User()";
-            mysql_close($conn);
-            //return false;
             return "SQLERROR";
+            mysql_close($conn);            
         }
     }
 

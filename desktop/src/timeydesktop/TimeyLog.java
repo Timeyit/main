@@ -1,6 +1,12 @@
 package timeydesktop;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -35,40 +41,29 @@ public class TimeyLog {
 	
 	private static void AddLogEntry(String logMessage, String logType)
 	{
-		Logger logger = Logger.getLogger("logfile.log");  
-	    FileHandler fh;  
-
-	    try {  
-
-	        // This block configure the logger with handler and formatter  
-	        fh = new FileHandler(".log");  
-	        logger.addHandler(fh);
-	        SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter);  
-
-	        // the following statement is used to log any messages 
-	        if(logType.equals("info"))
-	        {
-	        	logger.info(logMessage);  
-	        }
-	        else if(logType.equals("warning"))
-	        {
-	        	logger.warning(logMessage);
-	        }
-	        else if(logType.equals("severe"))
-	        {
-	        	logger.severe(logMessage);
-	        }
-	        else
-	        {
-	        	logger.fine(logMessage);
-	        }
-
-	    } catch (SecurityException e) {  
-	        e.printStackTrace();  
-	    } catch (IOException e) {  
-	        e.printStackTrace();  
-	    }  
-
+		// This block configure the logger with handler and formatter  
+        String datestr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        String logfileFolderPath = System.getenv("APPDATA") + "\\Timey\\";
+        File logfileFolder = new File(logfileFolderPath);
+        String logfilePath = logfileFolderPath + "Timeylog.log";
+        File logfile = new File(logfilePath);
+        
+        String msg = datestr + " - " + logType + " - " + logMessage + "\n";
+        System.out.println(msg);
+        try {
+        	if(!logfileFolder.exists())
+            {
+        		logfileFolder.mkdir();
+            }
+        	
+        	if(!logfile.exists())
+            {
+        		logfile.createNewFile();
+            }
+        	
+            Files.write(Paths.get(logfilePath), msg.getBytes(), StandardOpenOption.APPEND);
+        }catch (IOException e) {
+            //exception handling left as an exercise for the reader
+        }
 	}
 }

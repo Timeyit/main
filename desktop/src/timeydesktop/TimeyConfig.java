@@ -12,7 +12,7 @@ import java.util.Properties;
 public class TimeyConfig {
 	
 	
-	String configurationFilePath = "timeyconfiguration.config";
+	String configurationFilePath = System.getenv("APPDATA") + "\\Timey\\timeyconfiguration.config";
 	public TimeyConfig()
 	{
 		File f = new File(configurationFilePath);

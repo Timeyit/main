@@ -33,9 +33,13 @@ angular.module('myApp')
         }
         $log.log('Signup Controller - Signing Up');
 
-        $http.post('PHP/user_create.php', {'username' : vm.username, 'password' : md5.createHash("mysalt" + vm.password), 'email' : vm.email}
+        $http.post('PHP/user_create.php', {
+            'username' : vm.username,
+            'password' : md5.createHash("mysalt" + vm.password),
+            'email' : vm.email}
                   ).success(function (data, status, headers, config) {
             // Do nothing. Only persist.
+            $log.log("Got data: " + data);
             if(data == "OK")
             {
                 // Send confirmation email.
