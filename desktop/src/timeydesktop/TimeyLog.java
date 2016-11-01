@@ -45,7 +45,7 @@ public class TimeyLog {
         String logfilePath = logfileFolderPath + "Timeylog.log";
         File logfile = new File(logfilePath);
         
-        String msg = datestr + " - " + logType + " - " + logMessage + "\n";
+        String msg = datestr + " - " + logType + " - " + logMessage;
         System.out.println(msg);
         try {
         	if(!logfileFolder.exists())

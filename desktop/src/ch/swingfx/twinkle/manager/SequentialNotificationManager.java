@@ -59,6 +59,11 @@ public class SequentialNotificationManager {
 	protected static void showNotification(final JWindow window) {
 		try {
 			sLock.lock();
+			////////////////////////////////////////////////////////////////////////////////////
+			// Clear all old notifications from being displayed.
+			// This is important if the screen is locked, to avoid flooding by notification
+			////////////////////////////////////////////////////////////////////////////////////
+			sWindows.clear();
 			sWindows.addLast(window);
 			window.addWindowListener(new WindowAdapter() {
 				@Override

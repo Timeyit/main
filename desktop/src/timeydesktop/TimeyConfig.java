@@ -31,6 +31,7 @@ public class TimeyConfig {
 				out.println("trackNotificationDelay=300");
 				out.println("showNoTrackingNotifications=true");
 				out.println("noTrackingNotificationDelay=300");
+				out.println("syncDelay=30");
 			} catch (FileNotFoundException e) {
 				TimeyLog.LogException("Failed to instansiate TimeyConfig", e);
 			} finally
@@ -73,6 +74,18 @@ public class TimeyConfig {
 		return Integer.parseInt(getProperty("noTrackingNotificationDelay"));
 	}
 	
+	public int getSyncDelay() {
+		try {
+			return Integer.parseInt(getProperty("syncDelay"));
+		} catch (NumberFormatException e) {
+			TimeyLog.LogException("TimeyConfig: failed to get syncDelay", e);
+			return 30;
+		} catch (IOException e) {
+			TimeyLog.LogException("TimeyConfig: failed to get syncDelay", e);
+			return 30;
+		}
+	}
+	
 	public boolean setUsername(String username) throws IOException {
 		return setProperty("username", username);
 	}
@@ -95,6 +108,10 @@ public class TimeyConfig {
 	
 	public boolean setNoTrackingNotificationDelay(int noTrackingNotificationDelay) throws IOException {
 		return setProperty("noTrackingNotificationDelay", Integer.toString(noTrackingNotificationDelay));
+	}
+	
+	public boolean setSyncDelay(int syncDelay) throws IOException {
+		return setProperty("syncDelay", Integer.toString(syncDelay));
 	}
 	
 	public String getProperty(String propertyName) throws IOException {

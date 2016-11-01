@@ -159,7 +159,7 @@ public class TimeyDesktop {
 	        }
 	    };
 	    
-		timeySyncTimer.scheduleAtFixedRate(timerTask, TimeyEngine.Options.SyncTime, TimeyEngine.Options.SyncTime);
+		timeySyncTimer.scheduleAtFixedRate(timerTask, TimeyEngine.config.getSyncDelay() , TimeyEngine.config.getSyncDelay());
 		
 		// Start by stopping the current tracking to trigger notifications.
 		TimeyEngine.getInstance().StopTracking();
@@ -169,7 +169,7 @@ public class TimeyDesktop {
 	{
 		TimeyLog.LogFine("Populating TrackMenu");
 		
-		if(TimeyEngine.getInstance().RefreshSession())
+		if(TimeyAPIHelper.RefreshSession())
 		{
 			popup.remove(menuItemStopRestart);
 			if(TimeyEngine.IsTracking)
@@ -183,7 +183,7 @@ public class TimeyDesktop {
 				TimeyConfig config = new TimeyConfig();
 				try {
 					final String idtotrack = config.getLastTracked();
-					System.out.println("Id last tracked: " + idtotrack);
+					TimeyLog.LogFine("Id last tracked: " + idtotrack);
 					// See if id exists.
 					String workItemName = null; 
 					for(Iterator<WorkItem> i = TimeyEngine.WorkItems.iterator(); i.hasNext(); ) {
@@ -196,11 +196,11 @@ public class TimeyDesktop {
 					
 					if(workItemName != null)
 					{
-						System.out.println("Name last tracked: " + workItemName);
+						TimeyLog.LogFine("Name last tracked: " + workItemName);
 						menuItemStopRestart = new MenuItem("Track: " + workItemName);
 						ActionListener listenerTrackItem = new ActionListener() {
 					        public void actionPerformed(ActionEvent e) {
-					        	System.out.println("Id last tracked (starting): " + idtotrack);
+					        	TimeyLog.LogFine("Id last tracked (starting): " + idtotrack);
 					        	TimeyEngine.getInstance().StartTracking(idtotrack);
 					        }
 					    };
@@ -226,11 +226,9 @@ public class TimeyDesktop {
 			        }
 			    };
 			    
-			    //System.out.println(item.nameWorkItem + " - " + item.idworkItem + " - " + item.duration);
 	        	MenuItem trackItem = new MenuItem(item.nameWorkItem + " (" + item.duration + ")");
 	        	trackItem.addActionListener(listenerTrackItem);
 	        	menuTrack.add(trackItem);
-	            //System.out.println(item.nameWorkItem);
 	        }
 		}
 		
@@ -241,11 +239,9 @@ public class TimeyDesktop {
 		TimeyLog.LogInfo("Logging Out");
 		try
 		{
-			TimeyConfig properties = new TimeyConfig();
-			// Verify that we have the right version of the api
 	
-			properties.setPassword("");
-			properties.setUsername("");
+			TimeyEngine.config.setPassword("");
+			TimeyEngine.config.setUsername("");
 			TimeyEngine.SessionKey = null;
 			HandleLogin();
 		}
@@ -263,7 +259,7 @@ public class TimeyDesktop {
 		{
 			TimeyConfig properties = new TimeyConfig();
 			// Verify that we have the right version of the api
-			String serverVersion = TimeyEngine.getInstance().GetLatestVersion();
+			String serverVersion = TimeyAPIHelper.GetLatestVersion();
 			TimeyLog.LogInfo("Server version = " + serverVersion + ". Desktop version = " + properties.getVersion() + ".");
 			if(!properties.getVersion().equals(serverVersion))
 			{
@@ -276,15 +272,14 @@ public class TimeyDesktop {
 			    	try {
 						Desktop.getDesktop().browse(new URI("http://www.timey.it"));
 					} catch (URISyntaxException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						TimeyLog.LogException("Error opening timey homepage", e);
 					}
 			    }
 			}
 		}
 		catch(IOException ex)
 		{
-			System.err.println("Error checking latest version. Exiting");
+			TimeyLog.LogException("Error checking latest version. Exiting", ex);
 			System.exit(0);
 		}
 	}
@@ -302,27 +297,24 @@ public class TimeyDesktop {
 				tries++;
 				if(tries > 3)
 				{
+					TimeyLog.LogSevere("Tried to log in 3 times. Exiting.");
 					System.exit(0);
 				}
 				
-				TimeyEngine.getInstance().OpenSession();
+				TimeyAPIHelper.OpenSession();
 				if(TimeyEngine.SessionKey == null)
 				{
 					try {
 						UIManager.setLookAndFeel(
 						        UIManager.getSystemLookAndFeelClassName());
 					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						TimeyLog.LogException("Error applying theme.", e);
 					} catch (InstantiationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						TimeyLog.LogException("Error applying theme.", e);
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						TimeyLog.LogException("Error applying theme.", e);
 					} catch (UnsupportedLookAndFeelException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						TimeyLog.LogException("Error applying theme.", e);
 					}
 					
 					// Prompt for username & password
@@ -349,7 +341,7 @@ public class TimeyDesktop {
 					    properties.setPassword(pwd);
 			        }
 			        else {
-			        	System.err.println("Error logging in. Exiting");
+			        	TimeyLog.LogSevere("Error logging in. Exiting");
 			        	System.exit(0);
 			        }
 				    

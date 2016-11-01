@@ -1,7 +1,6 @@
 package timeydesktop;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -10,16 +9,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 
@@ -35,9 +24,7 @@ public class TimeyEngine {
 
 	private static TimeyEngine instance = null;
 	public static List<WorkItem> WorkItems = new ArrayList<WorkItem>();
-	public static TimeyOptions Options = new TimeyOptions();
 	public static boolean IsTracking = false;
-	public static boolean ReminderPopupClosed = false;
 	public static WorkItem TrackedItem = new WorkItem();
 	public static int NumAlarams = 0;
 	private static Timer trackTimer = new Timer();
@@ -71,7 +58,6 @@ public class TimeyEngine {
 		trackTimer.cancel();
 		try {
 			if (config.getShowNoTrackingNotifications()) {
-				TimeyEngine.ReminderPopupClosed = true;
 				TimerTask timerTask = new TimerTask() {
 					@Override
 					public void run() {
@@ -137,238 +123,26 @@ public class TimeyEngine {
 		TimeyDesktop.PopulateTrackMenu();
 	}
 
-	public String GetLatestVersion() {
-		try {
-			HttpClient httpclient = HttpClients.createDefault();
-			HttpGet request = new HttpGet(ApiBase + "version.php");
-
-			// Execute and get the response.
-			HttpResponse response = httpclient.execute(request);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				String jsonData = IOUtils.toString(instream, "UTF-8");
-				instream.close();
-				TimeyLog.LogFine("Got data: " + jsonData);
-
-				return jsonData;
-			}
-		} catch (Exception ex) {
-			TimeyLog.LogException("Failed to get latest Timey version", ex);
-		}
-		return "0.0";
-	}
-
-	public String OpenSession() {
-		try {
-			TimeyLog.LogInfo("Opening Session");
-			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(ApiBase + "session_createSession.php");
-
-			// Request parameters and other properties.
-			String requestJSON = "{\"username\":\"" + config.getUsername() + "\",\"password\":\"" + config.getPassword()
-					+ "\"} ";
-			TimeyLog.LogFine("Request JSON: " + requestJSON);
-			StringEntity params = new StringEntity(requestJSON);
-			httppost.addHeader("content-type", "application/json");
-			httppost.setEntity(params);
-
-			// Execute and get the response.
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				String responseData = IOUtils.toString(instream, "UTF-8");
-				instream.close();
-				System.out.println("Response: " + responseData);
-				if (responseData.contains("fail")) {
-					return null;
-				} else {
-					SessionKey = responseData;
-					return responseData;
-				}
-
-			}
-		} catch (Exception ex) {
-			TimeyLog.LogException("Failed to open Timey session", ex);
-		}
-		return null;
-	}
-	
-	public boolean RefreshSession() {
-		try {
-			TimeyLog.LogInfo("Refresing Session");
-			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(ApiBase + "session_refreshSession.php");
-
-			// Request parameters and other properties.
-			String requestJSON = "{\"sessionkey\":\"" + TimeyEngine.SessionKey + "\"} ";
-			TimeyLog.LogFine("Request JSON: " + requestJSON);
-			StringEntity params = new StringEntity(requestJSON);
-			httppost.addHeader("content-type", "application/json");
-			httppost.setEntity(params);
-
-			// Execute and get the response.
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				String responseData = IOUtils.toString(instream, "UTF-8");
-				instream.close();
-				System.out.println("Response: " + responseData);
-				if (responseData.contains("OK")) {
-					return true;
-				} else {
-					return false;
-				}
-
-			}
-		} catch (Exception ex) {
-			TimeyLog.LogException("Failed to refresh Timey session", ex);
-		}
-		return false;
-	}
-
 	public void Sync() {
 		// Refresh or open session
-		if(!RefreshSession())
-		{
-			OpenSession();
+		if (!TimeyAPIHelper.RefreshSession()) {
+			TimeyAPIHelper.OpenSession();
 		}
-		
+
 		// Proceed with syncing
 		if (IsTracking) {
 			Interval timeSinceLastSync = new Interval(TrackingLastSync, new Instant());
 			Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
 			TimeyLog.LogFine("Time Since Last Sync: " + (double) timeSinceLastSync.toDurationMillis() / (double) 1000);
 			TimeyLog.LogFine("Time Since Last Start: " + (double) timeSinceStart.toDurationMillis() / (double) 1000);
-			if (UploadTrackedTime()) {
+			if (TimeyAPIHelper.UploadTrackedTime()) {
 				TrackingLastSync = new Instant();
 			}
 
 		} else {
 			TimeyLog.LogFine("Not tracking time");
 		}
-		WorkItems = GetWorkItems();
-	}
-
-	public List<WorkItem> GetWorkItems() {
-		try {
-			// System.out.println("Getting work items");
-			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(ApiBase + "workItem_getAll.php");
-
-			// Request parameters and other properties.
-			StringEntity params = new StringEntity("{\"sessionkey\":\"" + SessionKey + "\"} ");
-			httppost.addHeader("content-type", "application/json");
-			httppost.setEntity(params);
-
-			// Execute and get the response.
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				String jsonData = IOUtils.toString(instream, "UTF-8");
-				instream.close();
-				// System.out.println("Got data: " + jsonData);
-				ObjectMapper mapper = new ObjectMapper();
-				List<WorkItem> workItems = mapper.readValue(jsonData, new TypeReference<List<WorkItem>>() {
-				});
-				// System.out.println("Got : " + workItems.size() + " work
-				// items" );
-				return workItems;
-			}
-		} catch (Exception ex) {
-			TimeyLog.LogException("Failed to get work items", ex);
-		}
-		return new ArrayList<WorkItem>();
-	}
-
-	public boolean UploadTrackedTime() {
-
-		Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
-		long duration = timeSinceStart.toDuration().getStandardSeconds();
-		duration = duration + TrackedItem.GetDurationLong();
-
-		Interval timeSinceLastSync = new Interval(TrackingLastSync, new Instant());
-		long durationSinceLastSync = timeSinceLastSync.toDuration().getStandardSeconds();
-
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Update work item main
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		try {
-			TimeyLog.LogInfo("Uploading tracked time (Main)");
-			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(ApiBase + "workItem_update.php");
-
-			// Request parameters and other properties.
-			String requestJSON = "{" + "\"idworkItem\":\"" + TrackedItem.idworkItem + "\"," + "\"duration\":" + "\""
-					+ Long.toString(duration) + "\"" + "," + "\"sessionkey\":\"" + SessionKey + "\"" + "} ";
-			TimeyLog.LogFine("Request JSON: " + requestJSON);
-			StringEntity params = new StringEntity(requestJSON);
-			httppost.addHeader("content-type", "application/json");
-			httppost.setEntity(params);
-
-			// Execute and get the response.
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				String jsonData = IOUtils.toString(instream, "UTF-8");
-				instream.close();
-				TimeyLog.LogFine("Response JSON: " + jsonData);
-
-			}
-		} catch (Exception ex) {
-			TimeyLog.LogException("Failed to update work item time", ex);
-			return false;
-		}
-
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Update lap tracking
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		try {
-
-			TimeyLog.LogInfo("Uploading tracked time (LAP)");
-			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(ApiBase + "timeLog_updateCreate.php");
-
-			// Request parameters and other properties.
-			String requestJSON = "{" + "\"idworkItem\":\"" + TrackedItem.idworkItem + "\"," + "\"durationLap\":" + "\""
-					+ Long.toString(durationSinceLastSync) + "\"" + "," + "\"idTimeLog\":" + "\""
-					+ Long.toString(IDTimeLog) + "\"" + "," + "\"sessionkey\":\"" + SessionKey + "\"" + "} ";
-			TimeyLog.LogFine("Request JSON: " + requestJSON);
-			StringEntity params = new StringEntity(requestJSON);
-			httppost.addHeader("content-type", "application/json");
-			httppost.setEntity(params);
-
-			// Execute and get the response.
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				String jsonData = IOUtils.toString(instream, "UTF-8");
-				if (IDTimeLog < 0) {
-					// BAD SOLUTION FOR DESERIALIZING, BUT LETS USE FOR NOW
-					String timeIdString = jsonData.replace("[{\"myid\":\"", "").replace("\"}]", "");
-					IDTimeLog = Long.parseLong(timeIdString);
-				}
-				instream.close();
-				TimeyLog.LogFine("Response JSON: " + jsonData);
-			}
-		} catch (Exception ex) {
-			TimeyLog.LogException("Failed to update lap time tracking", ex);
-			return false;
-		}
-
-		return true;
+		WorkItems = TimeyAPIHelper.GetWorkItems();
 	}
 
 	public void ShowReminderPopup() {
@@ -395,14 +169,10 @@ public class TimeyEngine {
 													// center of the screen
 				.withListener(new NotificationEventAdapter() { // Optional
 					public void closed(NotificationEvent event) {
-						// System.out.println("closed notification with UUID " +
-						// event.getId());
 						TimeyEngine.getInstance().StopTracking();
 					}
 
 					public void clicked(NotificationEvent event) {
-						// System.out.println("clicked notification with UUID "
-						// + event.getId());
 						TimeyEngine.getInstance().KeepTracking();
 					}
 				}).showNotification(); // this returns a UUID that you can use
@@ -410,57 +180,37 @@ public class TimeyEngine {
 	}
 
 	public void ShowNoTrackingReminderPopup() {
-		if (TimeyEngine.ReminderPopupClosed) {
-			
-			TimeyLog.LogInfo("Showing tracking reminder popup");
-			
-			INotificationStyle style = new LightDefaultNotification().withWidth(400) // Optional
-					.withAlpha(0.9f) // Optional
-					;
+		TimeyLog.LogInfo("Showing tracking reminder popup");
 
-			new NotificationBuilder().withStyle(style) // Required. here we set
-														// the
-														// previously set style
-					.withTitle("Timey") // Required.
-					.withMessage("Currently not tracking time.") // Optional
-					.withDisplayTime(4000) // Optional
-					.withPosition(Positions.SOUTH_EAST) // Optional. Show it at
-														// the
-														// center of the screen
-					.withListener(new NotificationEventAdapter() { // Optional
-						public void closed(NotificationEvent event) {
-							TimeyEngine.ReminderPopupClosed = true;
-						}
+		INotificationStyle style = new LightDefaultNotification()
+				.withWidth(400)
+				.withAlpha(0.9f)
+				;
 
-						public void clicked(NotificationEvent event) {
-							TimeyEngine.ReminderPopupClosed = true;
-						}
-					}).showNotification();
-		} else {
-			TimeyLog.LogInfo("Last reminder not closed. Not showing new reminder.");
-		}
+		new NotificationBuilder()
+				.withStyle(style).withTitle("Timey")
+				.withMessage("Currently not tracking time.")
+				.withDisplayTime(4000)
+				.withPosition(Positions.SOUTH_EAST)
+				.showNotification();
 	}
 
 	public void ShowTrackStartPopup(String taskName) {
 		TimeyLog.LogInfo("Showing start tracking popup. Item: " + taskName);
 
-		INotificationStyle style = new DarkDefaultNotification().withWidth(400) // Optional
-				.withAlpha(0.9f) // Optional
+		INotificationStyle style = new DarkDefaultNotification()
+				.withWidth(400)
+				.withAlpha(0.9f)
 				;
 
 		// Now lets build the notification
-		new NotificationBuilder().withStyle(style) // Required. here we set the
-													// previously set style
-				.withTitle("Timey") // Required.
-				.withMessage("Now tracking item: " + taskName) // Optional
-				// .withIcon(new
-				// ImageIcon(QuickStart.class.getResource("/twinkle.png"))) //
-				// Optional. You could also use a String path
-				.withDisplayTime(2000) // Optional
-				.withPosition(Positions.SOUTH_EAST) // Optional. Show it at the
-													// center of the screen
-				.showNotification(); // this returns a UUID that you can use to
-										// identify events on the listener
+		new NotificationBuilder()
+				.withStyle(style)
+				.withTitle("Timey")
+				.withMessage("Now tracking item: " + taskName)
+				.withDisplayTime(3000)
+				.withPosition(Positions.SOUTH_EAST)
+				.showNotification();
 	}
 
 	public void CloseApplication() {
