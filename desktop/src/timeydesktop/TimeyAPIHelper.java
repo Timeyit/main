@@ -151,6 +151,7 @@ public class TimeyAPIHelper {
 	public static boolean UploadTrackedTime() {
 
 		Interval timeSinceStart = new Interval(TimeyEngine.TrackingStartTime, new Instant());
+		long durationSinceStartTracking = timeSinceStart.toDuration().getStandardSeconds();
 		long duration = timeSinceStart.toDuration().getStandardSeconds();
 		duration = duration + TimeyEngine.TrackedItem.GetDurationLong();
 
@@ -201,7 +202,7 @@ public class TimeyAPIHelper {
 
 			// Request parameters and other properties.
 			String requestJSON = "{" + "\"idworkItem\":\"" + TimeyEngine.TrackedItem.idworkItem + "\"," + "\"durationLap\":" + "\""
-					+ Long.toString(durationSinceLastSync) + "\"" + "," + "\"idTimeLog\":" + "\""
+					+ Long.toString(durationSinceStartTracking) + "\"" + "," + "\"idTimeLog\":" + "\""
 					+ Long.toString(TimeyEngine.IDTimeLog) + "\"" + "," + "\"sessionkey\":\"" + TimeyEngine.SessionKey + "\"" + "} ";
 			TimeyLog.LogFine("Request JSON: " + requestJSON);
 			StringEntity params = new StringEntity(requestJSON);
