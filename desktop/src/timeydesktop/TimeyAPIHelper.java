@@ -152,11 +152,19 @@ public class TimeyAPIHelper {
 
 		Interval timeSinceStart = new Interval(TimeyEngine.TrackingStartTime, new Instant());
 		long durationSinceStartTracking = timeSinceStart.toDuration().getStandardSeconds();
-		long duration = timeSinceStart.toDuration().getStandardSeconds();
-		duration = duration + TimeyEngine.TrackedItem.GetDurationLong();
-
-		Interval timeSinceLastSync = new Interval(TimeyEngine.TrackingLastSync, new Instant());
-		long durationSinceLastSync = timeSinceLastSync.toDuration().getStandardSeconds();
+		
+		long currentDuration = TimeyEngine.TrackedItem.GetDurationLong();
+		long unsyncedDuration = 0;
+		List<TimeLog> unsyncedTimeLogs = TimeyEngine.TimeyDBHelper.GetUnsyncedTimeLogs();
+		// Get all unsynced TimeLogs (never miss a beat)
+		for(TimeLog timeLog : unsyncedTimeLogs)
+		{
+			unsyncedDuration = unsyncedDuration + timeLog.TimeDifference;
+		}
+		
+		long duration = currentDuration + unsyncedDuration;
+		//Interval timeSinceLastSync = new Interval(TimeyEngine.TrackingLastSync, new Instant());
+		//long durationSinceLastSync = timeSinceLastSync.toDuration().getStandardSeconds();
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Update work item main
@@ -183,9 +191,23 @@ public class TimeyAPIHelper {
 				InputStream instream = entity.getContent();
 				String jsonData = IOUtils.toString(instream, "UTF-8");
 				instream.close();
-				TimeyLog.LogFine("Response JSON: " + jsonData);
-
+				
+				if(jsonData.equals("OK"))
+				{
+					// If update is ok. Marked items as synced
+					for(TimeLog timeLog : unsyncedTimeLogs)
+					{
+						timeLog.IsSynced = true;
+						TimeyEngine.TimeyDBHelper.UpdateTimeLog(timeLog);
+					}
+				}
+				else
+				{
+					TimeyLog.LogFine("Failed to update work item. Response JSON: " + jsonData);
+				}
 			}
+			
+			
 		} catch (Exception ex) {
 			TimeyLog.LogException("Failed to update work item time", ex);
 			return false;
@@ -193,6 +215,7 @@ public class TimeyAPIHelper {
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Update lap tracking
+		// TODO: Use the database records for this instead
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		try {
 

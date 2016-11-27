@@ -48,7 +48,7 @@ public class TimeyDesktop {
 	public static void main(String[] args) throws IOException {
 		
 		TimeyLog.LogInfo("Starting Timey");
-		
+		TimeyEngine.TimeyDBHelper.Initialize();
 		// AA the text
 		System.setProperty("swing.aatext", "true");
 		

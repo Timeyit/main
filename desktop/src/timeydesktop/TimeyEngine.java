@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 
@@ -35,6 +36,7 @@ public class TimeyEngine {
 	public static String TimeyBase = "http://timey.it";
 	public static String ApiBase = TimeyBase + "/PHP/";
 	public static long IDTimeLog = -1;
+	public static ITimeyDB TimeyDBHelper = new TimeyDBSQLLite();
 
 	protected TimeyEngine() {
 		// Exists only to defeat instantiation.
@@ -135,10 +137,23 @@ public class TimeyEngine {
 		if (IsTracking) {
 			Interval timeSinceLastSync = new Interval(TrackingLastSync, new Instant());
 			Interval timeSinceStart = new Interval(TrackingStartTime, new Instant());
-			TimeyLog.LogFine("Time Since Last Sync: " + (double) timeSinceLastSync.toDurationMillis() / (double) 1000);
-			TimeyLog.LogFine("Time Since Last Start: " + (double) timeSinceStart.toDurationMillis() / (double) 1000);
-			if (TimeyAPIHelper.UploadTrackedTime()) {
-				TrackingLastSync = new Instant();
+			long timeSinceLastSyncLong = timeSinceLastSync.toDurationMillis() / 1000;
+			long timeSinceStartLong = timeSinceStart.toDurationMillis() / 1000;
+			TimeyLog.LogFine("Time Since Last Sync: " + timeSinceLastSyncLong);
+			TimeyLog.LogFine("Time Since Last Start: " + timeSinceStartLong);
+			TrackingLastSync = new Instant();
+			
+			 
+			TimeLog timeLog = new TimeLog(
+					TimeyEngine.TrackedItem.idworkItem,
+					timeSinceLastSyncLong,
+					DateTime.now(),
+					false
+					);
+			TimeyDBHelper.AddTimeLog(timeLog);
+			
+			if (!TimeyAPIHelper.UploadTrackedTime()) {
+				TimeyLog.LogSevere("Failed to Upload Tracked Time");
 			}
 
 		} else {
@@ -166,7 +181,7 @@ public class TimeyEngine {
 				// .withIcon(new
 				// ImageIcon(QuickStart.class.getResource("/twinkle.png"))) //
 				// Optional. You could also use a String path
-				.withDisplayTime(10000) // Optional
+				.withDisplayTime(15000) // Optional
 				.withPosition(Positions.SOUTH_EAST) // Optional. Show it at the
 													// center of the screen
 				.withListener(new NotificationEventAdapter() { // Optional

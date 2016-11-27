@@ -11,8 +11,9 @@ import java.util.Properties;
 
 public class TimeyConfig {
 	
+	public static String TimeyDirectory = System.getenv("APPDATA") + "\\Timey\\";
+	public static String configurationFilePath = TimeyDirectory + "timeyconfiguration.config";
 	
-	String configurationFilePath = System.getenv("APPDATA") + "\\Timey\\timeyconfiguration.config";
 	public TimeyConfig()
 	{
 		File f = new File(configurationFilePath);
