@@ -36,7 +36,18 @@ public class TimeyDBSQLLite implements ITimeyDB {
 	                   " Timestamp      DATETIME NOT NULL, " + 
 	                   " IsSynced       BOOLEAN  NOT NULL " +
 	                   ")"; 
+
 	      stmt.executeUpdate(sql);
+	      
+	      sql = "CREATE TABLE IF NOT EXISTS Logs " +
+                  "(LogID          INTEGER  PRIMARY KEY AUTOINCREMENT," +
+                  " LogLevel       TEXT     NOT NULL, " + 
+                  " LogMessage        TEXT     NOT NULL, " + 
+                  " Timestamp      DATETIME NOT NULL " + 
+                  ")"; 
+
+	      stmt.executeUpdate(sql);
+     
 	      stmt.close();
 	      c.close();
 	    } catch ( Exception e ) {
@@ -194,6 +205,76 @@ public class TimeyDBSQLLite implements ITimeyDB {
 	      return false;
 	    }
 	    System.out.println("Operation done successfully");
+	    return true;
+	}
+
+	public List<LogEntry> GetLogEntries(String filter) {
+		List<LogEntry> logEntries = new ArrayList<LogEntry>();
+		Connection c = null;
+	    Statement stmt = null;
+	    try {
+	      Class.forName("org.sqlite.JDBC");
+	      c = DriverManager.getConnection("jdbc:sqlite:" + TimeyDBFile);
+	      c.setAutoCommit(false);
+	      System.out.println("Opened database successfully");
+
+	      stmt = c.createStatement();
+	      ResultSet rs = stmt.executeQuery( "SELECT * FROM Logs " + filter + ";" );
+	      while ( rs.next() ) {
+	         // Parse SQL Results
+	    	 int logID = rs.getInt("LogID");
+	         String  logLevel = rs.getString("LogLevel");
+	         String  logMessage = rs.getString("LogMessage");
+	         DateTime  timestamp = new DateTime(rs.getTimestamp("Timestamp"));
+	         // Create TimeLog item
+	         LogEntry logEntry = new LogEntry(logID, logLevel, logMessage, timestamp);
+	         logEntries.add(logEntry);
+	         System.out.println( "LogID = " + logEntry.LogID );
+	         System.out.println( "LogLevel = " + logEntry.LogLevel );
+	         System.out.println( "LogLevel = " + logEntry.LogLevel );
+	         System.out.println( "Timestamp = " + logEntry.Timestamp );
+	         System.out.println();
+	      }
+	      rs.close();
+	      stmt.close();
+	      c.close();
+	    } catch ( Exception e ) {
+	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+	      return logEntries;
+	    }
+	    System.out.println("Operation done successfully");
+	    return logEntries;
+	}
+
+	@Override
+	public boolean AddLogEntry(LogEntry entry) {
+		Connection c = null;
+	    Statement stmt = null;
+	    try {
+	      Class.forName("org.sqlite.JDBC");
+	      c = DriverManager.getConnection("jdbc:sqlite:" + TimeyDBFile);
+	      c.setAutoCommit(false);
+	      System.out.println("Opened database successfully");
+
+	      stmt = c.createStatement();
+	      Timestamp timeStamp = new Timestamp(entry.Timestamp.getMillis());
+	      	      
+	      String sql = "INSERT INTO Logs (LogLevel,LogMessage,Timestamp) " +
+	                   "VALUES (" + 
+	                   		"'" + entry.LogLevel + "'" + ", " +
+	                   		"'" + entry.LogMessage + "'" + ", " +
+	                   		"'" + timeStamp.toString() + "'" +
+	                   		");"; 
+	      stmt.executeUpdate(sql);
+
+	      stmt.close();
+	      c.commit();
+	      c.close();
+	    } catch ( Exception e ) {
+	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+	      return false;
+	    }
+	    System.out.println("Records created successfully");
 	    return true;
 	}
 }

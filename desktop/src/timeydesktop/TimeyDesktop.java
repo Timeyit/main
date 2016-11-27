@@ -38,6 +38,7 @@ public class TimeyDesktop {
     static Menu menuTrack = new Menu("Track");
     static MenuItem menuItemStopRestart = new MenuItem("Track: <no history>");
     static MenuItem menuItemForceSync = new MenuItem("Force Sync");
+    static MenuItem menuItemLogs = new MenuItem("Logs");
     static MenuItem menuItemLogOut = new MenuItem("Log Out");
     static MenuItem menuItemExit = new MenuItem("Exit");
     static Timer timeySyncTimer = new Timer();
@@ -84,6 +85,12 @@ public class TimeyDesktop {
 		        }
 		    };
 		    
+		    ActionListener listenerLogs = new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		        	LogViewer.createAndShowGUI();
+		        }
+		    };
+		    
 		    ActionListener listenerExit = new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
 		        	TimeyEngine.getInstance().CloseApplication();
@@ -107,7 +114,11 @@ public class TimeyDesktop {
 		    menuItemForceSync.addActionListener(listenerForceSync);
 		    menuSettings.add(menuItemForceSync);
 		    
-		    // ---- MenuItem -> Force Sync
+		    // ---- MenuItem -> Logs
+		    menuItemLogs.addActionListener(listenerLogs);
+		    menuSettings.add(menuItemLogs);
+		    
+		    // ---- MenuItem -> Log Out
 		    menuItemLogOut.addActionListener(listenerLogOut);
 		    menuSettings.add(menuItemLogOut);
 		    

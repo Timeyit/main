@@ -12,31 +12,41 @@ public class TimeyLog {
 
 	public static void LogInfo(String logMessage)
 	{
-		AddLogEntry(logMessage, "info");
+		LogEntry entry = new LogEntry("info", logMessage);
+		AddLogEntry(entry);
+		TimeyEngine.TimeyDBHelper.AddLogEntry(entry);
 	}
 	
 	public static void LogWarning(String logMessage)
 	{
-		AddLogEntry(logMessage, "warning");
+		LogEntry entry = new LogEntry("warning", logMessage);
+		AddLogEntry(entry);
+		TimeyEngine.TimeyDBHelper.AddLogEntry(entry);
 	}
 	
 	public static void LogSevere(String logMessage)
 	{
-		AddLogEntry(logMessage, "severe");
+		LogEntry entry = new LogEntry("severe", logMessage);
+		AddLogEntry(entry);
+		TimeyEngine.TimeyDBHelper.AddLogEntry(entry);
 	}
 	
 	public static void LogException(String logMessage, Exception ex)
 	{
 		logMessage = logMessage + ". Exception: " + ex.toString() + " - " +ex.getMessage() + " - " + ex.getStackTrace();
-		AddLogEntry(logMessage, "severe");
+		LogEntry entry = new LogEntry("severe", logMessage);
+		AddLogEntry(entry);
+		TimeyEngine.TimeyDBHelper.AddLogEntry(entry);
 	}
 	
 	public static void LogFine(String logMessage)
 	{
-		AddLogEntry(logMessage, "fine");
+		LogEntry entry = new LogEntry("fine", logMessage);
+		AddLogEntry(entry);
+		TimeyEngine.TimeyDBHelper.AddLogEntry(entry);
 	}
 	
-	private static void AddLogEntry(String logMessage, String logType)
+	private static void AddLogEntry(LogEntry entry)
 	{
 		// This block configure the logger with handler and formatter  
         String dateTimestr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -46,7 +56,7 @@ public class TimeyLog {
         String logfilePath = logfileFolderPath + "Timeylog_" + datestr + ".log";
         File logfile = new File(logfilePath);
         
-        String msg = dateTimestr + " - " + logType + " - " + logMessage + "\n";
+        String msg = dateTimestr + " - " + entry.LogLevel + " - " + entry.LogMessage + "\n";
         System.out.print(msg);
         try {
         	if(!logfileFolder.exists())
