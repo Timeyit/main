@@ -1,0 +1,49 @@
+<div class="ui-calendar mini-datetime {{if editable 'action-support'}} {{_size}} {{if disabled 'disabled' 'enabled'}}">
+  <div class="display date {{if changingDate 'changing-date'}}" {{action 'changeDate'}}>
+    <div class="dow">{{moment-format _start 'dddd'}}</div>
+    <div class="dom">{{moment-format _start 'DD'}}</div>
+    <div class="month">{{moment-format _start 'MMMM'}}</div>
+  </div>
+  <div class="display time {{if changingTime 'changing-time'}}"
+    {{action 'changeTime'}}>
+    <div class="pad vertical"></div>
+    <div class="from">
+      {{moment-format _start _timeFormat}}{{#if ampm}}
+      <span class="ampm">{{moment-format _start 'a'}}</span>{{/if}}
+    </div>
+    {{#if durationIsSet}}
+    <div class="to">
+      {{#if showDuration}}
+        for {{durationPretty}}
+      {{else}}
+        until&nbsp;<span class="stop-time">{{moment-format _stop _timeFormat}}</span>
+        {{#if ampm}}<span class="ampm dim">{{moment-format _stop 'a'}}</span>{{/if}}
+      {{/if}}
+    </div>
+    {{/if}}
+    <div class="pad vertical"></div>
+  </div>
+</div>
+
+{{#if editable}}
+  <div class="change-actions">
+    {{#if changingDate}}
+      {{mini-date-change
+        value=startDate
+        size=size
+        onChange=(action 'onDateChange')
+        numDateChoices=numDateChoices
+      }}
+    {{/if}}
+    {{#if changingTime}}
+      {{mini-time-change
+        value=startMinutes
+        duration=duration
+        durationChoices=durationChoices
+        onTimeChange=(action 'onTimeChange')
+        onDurationChange=(action 'onDurationChange')
+      }}
+    {{/if}}
+  </div>
+{{/if}}
+{{yield}}

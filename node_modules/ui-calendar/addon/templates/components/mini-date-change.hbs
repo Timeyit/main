@@ -1,0 +1,41 @@
+<div class="incrementer side left-side decrease-date-range" {{action 'decreaseDateRange'}}>
+  {{#ui-animate 'ui-calendar-bump-left' event='click' duration=0.35}}
+    {{ui-icon icon='chevron-left' cursor=true fw=false}}
+  {{/ui-animate}}
+</div>
+<div class="date-range">
+  {{#if _value}}
+    {{#ui-buttons
+      stretch=true
+      cardinality="1:1"
+      value=date
+      class='choose-date fill'
+      onChange=(action 'dateChosen')
+      as |g|
+    }}
+      {{#each dateRange as |dateChoice|}}
+      {{#g.button
+        value=dateChoice
+        class=(concat 'fill' (if (eq today dateChoice) ' today' '') (if (weekend dateChoice) ' weekend' ' weekday'))
+        size=size
+      }}
+        <div class="choice flex-column fill">
+          <span class="current-dow fit">{{moment-format dateChoice "ddd"}}</span>
+          <span class="current-date fit">{{moment-format dateChoice "DD"}}</span>
+          <span class="current-month fit">{{moment-format dateChoice "MMM"}}</span>
+        </div>
+      {{/g.button}}
+      {{/each}}
+    {{/ui-buttons}}
+  {{/if}}
+</div>
+<div class="incrementer side right-side increase-date-range" onclick={{action 'increaseDateRange'}}>
+  {{#ui-animate 'ui-calendar-bump-right'
+    event='click'
+    duration=0.35
+  }}
+    {{ui-icon icon='chevron-right' cursor=true fw=false}}
+  {{/ui-animate}}
+</div>
+
+{{yield}}

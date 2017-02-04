@@ -38,7 +38,7 @@ public class TimeyDesktop {
     static Menu menuTrack = new Menu("Track");
     static MenuItem menuItemStopRestart = new MenuItem("Track: <no history>");
     static MenuItem menuItemForceSync = new MenuItem("Force Sync");
-    static MenuItem menuItemLogs = new MenuItem("Logs");
+    static MenuItem menuItemLogs = new MenuItem("View Logs");
     static MenuItem menuItemLogOut = new MenuItem("Log Out");
     static MenuItem menuItemExit = new MenuItem("Exit");
     static Timer timeySyncTimer = new Timer();
