@@ -2,14 +2,14 @@
     'use strict';
  
     angular
-        .module('myApp', ['ngRoute', 'ngCookies','ngTable','angular-md5','ngConfirm'])
+        .module('myApp', ['ngRoute', 'ngCookies','ngTable','angular-md5','ngConfirm','ui.calendar','ui.bootstrap'])
         .config(config)
         .run(run);
  
     config.$inject = ['$routeProvider', '$locationProvider'];
     function config($routeProvider, $locationProvider) {
         $routeProvider
-            .when('/', {
+            /*.when('/', {
                 controller: 'HomeController',
                 templateUrl: 'home/home.view.html',
                 controllerAs: 'vm'
@@ -28,6 +28,7 @@
             })
  
             .otherwise({ redirectTo: '/login' });
+            */
     }
  
     run.$inject = ['$rootScope', '$location', '$cookieStore', '$http'];
