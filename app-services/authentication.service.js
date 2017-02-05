@@ -40,8 +40,9 @@
                     'password' : password
                 }
                           ).then(function (data, status, headers, config) {
-                    $log.log("Validating Login - Data: " + data);
-                    if(data.toString().indexOf('ERROR') == -1)
+                    $log.log("Validating Login - Data: ");
+                    $log.log(data.data);
+                    if(data.data.indexOf('ERROR') == -1)
                     {
                         response = { 
                             success: true,

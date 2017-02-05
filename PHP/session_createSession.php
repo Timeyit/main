@@ -6,7 +6,7 @@ $Session = new Session();
 $result = $Session->createSession();
 
 if (strpos($result, 'ERROR') !== false) {
-    echo "fail";
+    echo $result;
 }
 // if unable to create the WorkItem, tell the user
 else{
