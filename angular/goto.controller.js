@@ -12,17 +12,17 @@
         $log.log("GoTo Controller: sessionkey: " + sessionkey);
         $log.log("GoTo Controller: page: " + $location.search()['page']);
         $http.post('PHP/session_verifySession.php', {'sessionkey' : sessionkey}
-                  ).success(function (data, status, headers, config) {
-            if(data == 'OK')
+                  ).then(function (data, status, headers, config) {
+            if(data.data == 'OK')
             {
                 $log.log("GoTo Controller: Session ok. Getting username.");
                 //AuthenticationService.SetCredentials('', sessionkey);
                 $http.post('PHP/session_getUsername.php', {'sessionkey' : sessionkey}
-                  ).success(function (data, status, headers, config) {
-                    $log.log("GoTo Controller: Got username - " + data);
+                  ).then(function (data, status, headers, config) {
+                    $log.log("GoTo Controller: Got username - " + data.data);
                     $log.log("GoTo Controller: Username ok, updating credentials");
                     
-                    AuthenticationService.SetCredentials(data, $location.search()['sessionkey']);
+                    AuthenticationService.SetCredentials(data.data, $location.search()['sessionkey']);
                     $scope.NewURL = 'http://' + $location.host() + ':' + $location.port() + '/' + $location.search()['page'];
                     $window.location.href = $scope.NewURL;
                 });

@@ -1,6 +1,6 @@
 angular.module('myApp')
 
-    .controller('reportingcontroller', function($scope, $http, $location, $filter, ngTableParams, $window, $interval, UserService, AuthenticationService,$log) {
+    .controller('reportingcontroller', function($scope, $http, $location, $filter, ngTableParams, $window, $interval, UserService, AuthenticationService,$log,$q) {
 
     $scope.myData = [];
     $scope.myDataAllDays = [];
@@ -35,21 +35,25 @@ angular.module('myApp')
 
     var stop;
 
-    $scope.getAll = function()
-    {
+    $log.log("Getting all time logs");
+    return $q(function(resolve, reject) {
         $http.post('PHP/timeLog_getTimeLog.php', {'sessionkey' : AuthenticationService.GetSessionKey()}
-                  ).success(function (data, status, headers, config) {
+                  ).then(function (data, status, headers, config) {
             $scope.myData = [];
             $scope.myDataAllDays = [];
             $scope.myDataAllWeeks = [];
             $scope.myDataAllMonths = [];
             $scope.myDataAllItems = [];
             $scope.myDataDaily = [];
+            var newEvents = [];
             //$scope.myDataWeekly = [];
             //$scope.myDataMonthly = [];
 
             // Get all lap data
-            angular.forEach(data, function(value, key) {
+            var loop1 = 0;
+
+            angular.forEach(data.data, function(value, key) {
+                loop1 = loop1 + 1;
                 if (angular.isUndefined(value.nameWorkItem) || value.nameWorkItem == null)
                 {
                     // do nothing
@@ -59,6 +63,7 @@ angular.module('myApp')
 
                     value.dateStartAsString = $filter('date')(value.TimeStart, "yyyy-MM-dd").substr(0,10);
                     var mdate = Date.parse(value.TimeStart);
+                    var sdate = mdate/1000;
                     value.weekAsString = $filter('date')(mdate, "yyyy-ww");
                     value.monthAsString = $filter('date')(mdate, "yyyy-MMMM");
                     $scope.myData.push(
@@ -110,7 +115,7 @@ angular.module('myApp')
                         }
                     });
                 });
-                
+
                 // Sum up all weeks
                 angular.forEach($scope.myDataAllWeeks, function(valueWeek, keyWeek) {
 
@@ -140,13 +145,12 @@ angular.module('myApp')
                 });  
             });
 
-
-
-
+            resolve($scope.myData);
+        }, function errorCallback(response) {
+            reject(['Failed to get data from web service']);
         });
-        // call get tasks here
-    }
-    $scope.getAll(); 
+    });
+
 
     $scope.tableParams = new ngTableParams({
         sorting: {
@@ -154,82 +158,14 @@ angular.module('myApp')
         }},
                                            {
         getData: function($defer, params) {
-            $scope.myData = $filter('orderBy')($scope.myData, params.orderBy());
-            $defer.resolve($scope.myData);
+            var promise = $scope.getAll();
+            promise.then(function(response) {
+                $scope.myData = $filter('orderBy')($scope.myData, params.orderBy());
+                $defer.resolve($scope.myData);
+            });
         }
     });
 
-    /*$scope.go = function(x) {
-        if(x.task != $scope.previousTask)
-        {
-            $scope.lapTime = 0;
-            $scope.idTimeLog = -1;
-            $scope.previousTask = x.task;
-            $scope.currentIndex = $scope.myData.indexOf(x);
-            $scope.currentTask = $scope.myData[$scope.currentIndex].task;
-            $scope.totalTime = $scope.myData[$scope.currentIndex].totalTime;
-            // Launch timer
-            $scope.startTimer();
-        }
-    };*/
-
-    /*$scope.deleteWorkItem = function(x) {
-        $scope.currentIndex = $scope.myData.indexOf(x);
-        $http.post('delete_workItem.php', {'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem}
-                  ).success(function (data, status, headers, config) {
-            // refresh the list
-            $scope.getAll();
-        });
-    };*/
-
-    /*$scope.startTimer = function() {
-        if ( angular.isDefined(stop) ) return;
-        $scope.isTracking = true;
-        stop = $interval(function() {
-            if ($scope.isTracking)
-            {
-                if ($scope.myData[$scope.currentIndex].task != "") {
-                    $scope.myData[$scope.currentIndex].totalTime = parseInt($scope.myData[$scope.currentIndex].totalTime,10) + 1;
-                    $scope.lapTime = parseInt($scope.lapTime, 10) + 1;
-                    $scope.totalTime = $scope.myData[$scope.currentIndex].totalTime;
-                    if($scope.lapTime % updateInterval == 0)
-                    {
-                        $http.post('update_workItem.php', {'duration' : $scope.totalTime, 'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem}
-                                  ).success(function (data, status, headers, config) {
-                            // Do nothing. Only persist.
-                        });
-
-                        $http.post('update_timeLog.php', {'durationLap' : $scope.lapTime, 
-                                                          'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem, 
-                                                          'idTimeLog' : $scope.idTimeLog}
-                                  ).success(function (data, status, headers, config) {
-                            // Do nothing. Only persist.
-
-                            newTimeId = data[0].myid;
-                            if(newTimeId >= 0)
-                            {
-                                $scope.idTimeLog = newTimeId;
-                            }
-
-                        });
-                    }
-
-                } else {
-                    $scope.stopTimer();
-                }
-            }
-
-        }, 1000);
-    };
-
-    $scope.stopTimer = function() {
-        $scope.isTracking = false;
-        if (angular.isDefined(stop)) {
-            $interval.cancel(stop);
-            stop = undefined;
-        }
-    };
-    */
     // Local functions
     function initController() {
         //loadCurrentUser();
@@ -242,33 +178,6 @@ angular.module('myApp')
             vm.allUsers = users;
         });
     }
-    /*
-    function deleteUser(id) {
-        UserService.Delete(id)
-            .then(function () {
-            loadAllUsers();
-        });
-    }
-
-    // Desctructor
-    $scope.$on('$destroy', function() {
-        // Make sure that the interval is destroyed too
-        $scope.stopTimer();
-    });
-
-    // create new Work Item 
-    $scope.createWorkItem = function(){
-        //$log.log("Function: createWorkItem()");
-        // fields in key-value pairs
-        $http.post('create_workItem.php', {'itemName' : $scope.nameWorkItem, 'userName' : $scope.user}
-                  ).success(function (data, status, headers, config) {
-
-            $scope.nameWorkItem = '';
-
-            // refresh the list
-            $scope.getAll();
-        });
-    }*/
 
 })
 

@@ -39,13 +39,13 @@
                     'username' : username,
                     'password' : password
                 }
-                          ).success(function (data, status, headers, config) {
+                          ).then(function (data, status, headers, config) {
                     $log.log("Validating Login - Data: " + data);
-                    if(data.indexOf('ERROR') == -1)
+                    if(data.toString().indexOf('ERROR') == -1)
                     {
                         response = { 
                             success: true,
-                            sessionkey : data
+                            sessionkey : data.data
                         };
                     }
                     else

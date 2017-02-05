@@ -1,0 +1,14 @@
+{
+  "name": "angular-table",
+  "homepage": "https://github.com/davidjnelson/angular-table",
+  "version": "1.0.0",
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.0",
+    "commit": "599144dc9eded706975357de4c28b4deed75d880"
+  },
+  "_source": "https://github.com/davidjnelson/angular-table.git",
+  "_target": "*",
+  "_originalSource": "angular-table"
+}

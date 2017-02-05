@@ -1,0 +1,35 @@
+body {
+    font-family: arial;
+    margin: 0;
+}
+
+.demoTable {
+    float: left;
+    margin: 0;
+    vertical-align: top;
+    height: 70%;
+    width: 70%;
+    border-bottom: 1px solid black;
+}
+
+.demoDetailPane {
+    float: left;
+    border: 1px solid black;
+    margin: 0;
+    width: 20%;
+    height: 70%;
+    background-color: #87cefa;
+    vertical-align: top;
+}
+
+.demoDetailInnerPane {
+    padding: 5px;
+}
+
+.demoHeaderColumn {
+    background-color: #cccccc;
+}
+
+.demoHeaderText {
+    display: inline-block;
+}

@@ -1,7 +1,9 @@
 angular.module('myApp')
 
-    .controller('overviewcontroller', function($scope, $http, $location, $filter, $compile, $window, $interval, UserService, AuthenticationService,$log, uiCalendarConfig, $q) {
+    .controller('overviewcontroller', function($scope, $http, $location, $filter, $compile, $window, $interval, AuthenticationService,$log, uiCalendarConfig, $q) {
 
+    $scope.user = AuthenticationService.GetUsername();
+    
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
@@ -65,7 +67,7 @@ angular.module('myApp')
                         {
                             $log.log("Event date: " + sdate);
                             var newEvent = {
-                                    title: value.idworkItem,
+                                    title: value.nameWorkItem,
                                     start: new Date(mdate),
                                     end: new Date(mdate + value.Duration*1000),
                                     allDay: false

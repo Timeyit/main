@@ -1,24 +1,35 @@
 {
-    "name": "main",
-    "homepage": "https://github.com/Timeyit/main",
-    "authors": [
-        "S.Hall <simon.p.hall@accenture.com>"
-    ],
-    "description": "",
-    "main": "",
-    "license": "MIT",
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "test",
-        "tests"
-    ],
-    "dependencies": {
-        "angular-ui-calendar": "^1.0.2",
-        "ng-table": "^2.1.0",
-        "bootstrap": "*",
-        "angular-bootstrap": "*",
-        "jquery-ui": "*"
-    }
+  "name": "main",
+  "homepage": "https://github.com/Timeyit/main",
+  "authors": [
+    "S.Hall <simon.p.hall@accenture.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "*",
+    "angular-ui-calendar": "^1.0.2",
+    "ng-table": "^2.1.0",
+    "bootstrap": "*",
+    "angular-bootstrap": "*",
+    "jquery-ui": "*",
+    "angular-route": "*",
+    "angular-cookies": "*",
+    "moment": "*",
+    "bootstrap-datepicker": "*",
+    "angular-confirm": "*",
+    "angular-md5": "*",
+    "angular-table": "*"
+  },
+  "resolutions": {
+    "angular": "1.6.1"
+  }
 }

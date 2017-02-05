@@ -35,10 +35,11 @@ angular.module('myApp')
         $http.post('PHP/workItem_getAll.php', {
             'sessionkey' : $scope.sessionkey
         }
-                  ).success(function (data, status, headers, config) {
-            $log.log("Got data: " + data);
+                  ).then(function (data, status, headers, config) {
+            $log.log("Got data: " + data.data);
+            $log.log(data.data);
             $scope.myData = [];
-            angular.forEach(data, function(value, key) {
+            angular.forEach(data.data, function(value, key) {
                 if (angular.isUndefined(value.nameWorkItem) || value.nameWorkItem == null)
                 {
                     // do nothing
