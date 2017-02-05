@@ -68,7 +68,7 @@
         <!-- Custom CSS -->
         <link href="css/grayscale.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="bower_components/fullcalendar/dist/fullcalendar.css"/>
-        <link rel="stylesheet" type="text/css" href="bower_components/fullcalendar/dist/fullcalendar.print.css"/>
+        <link rel="stylesheet" media="print" href="bower_components/fullcalendar/dist/fullcalendar.print.css"/>
         <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 
         <!-- Custom Fonts -->
@@ -149,19 +149,21 @@
                     <tabset>
                         <tab select="renderCalender('myCalendar1');">
                             <tab-heading>
-                                <i class="glyphicon glyphicon-bell"></i> Calendar One
+                                <!--<i class="glyphicon glyphicon-bell"></i> Calendar One-->
+                                <span style="display:block; height: 20px;"></span>
                             </tab-heading>
                             <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
                                 <h4>{{alertMessage}}</h4>
                             </div>
                             <div class="btn-toolbar">
-                                <p class="pull-right lead">Calendar One View Options</p>
+                                <!--<p class="pull-right lead">Calendar One View Options</p>-->
                                 <div class="btn-group">
-                                    <button class="btn btn-success" ng-click="changeView('agendaDay', 'myCalendar1')">AgendaDay</button>
-                                    <button class="btn btn-success" ng-click="changeView('agendaWeek', 'myCalendar1')">AgendaWeek</button>
+                                    <button class="btn btn-success" ng-click="changeView('agendaDay', 'myCalendar1')">Day</button>
+                                    <button class="btn btn-success" ng-click="changeView('agendaWeek', 'myCalendar1')">Week</button>
                                     <button class="btn btn-success" ng-click="changeView('month', 'myCalendar1')">Month</button>
                                 </div>
                             </div>
+                            <span style="display:block; height: 20px;"></span>
                             <div class="calendar" ng-model="eventSources" calendar="myCalendar1" ui-calendar="uiConfig.calendar"></div>
                         </tab>
                     </tabset>
