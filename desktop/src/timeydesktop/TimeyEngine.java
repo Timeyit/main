@@ -177,7 +177,7 @@ public class TimeyEngine {
 													// previously set style
 				.withTitle("Timey") // Required.
 				.withMessage("Click message if still working on \"" + TimeyEngine.TrackedItem.nameWorkItem + "\" ("
-						+ TimeStartSec + " s).") // Optional
+						+ SecondsToTimeStr(TimeStartSec) + ").") // Optional
 				// .withIcon(new
 				// ImageIcon(QuickStart.class.getResource("/twinkle.png"))) //
 				// Optional. You could also use a String path
@@ -246,6 +246,24 @@ public class TimeyEngine {
 		} catch (URISyntaxException e) {
 			TimeyLog.LogException("Failed to open report page", e);
 		}
-
+	}
+	
+	private static String SecondsToTimeStr(int totalSecs)
+	{
+		int hours = totalSecs / 3600;
+		int minutes = (totalSecs % 3600) / 60;
+		int seconds = totalSecs % 60;
+		if(minutes == 0 && hours == 0)
+		{
+			return String.format("%02d sec", seconds);
+		}
+		else if(hours == 0)
+		{
+			return String.format("%02d min %02d sec", minutes, seconds);
+		}
+		else
+		{
+			return String.format("%02d hours %02d min", hours, minutes);
+		}
 	}
 }

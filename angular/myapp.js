@@ -8,7 +8,8 @@
  
     config.$inject = ['$routeProvider', '$locationProvider'];
     function config($routeProvider, $locationProvider) {
-        $routeProvider
+        $locationProvider.html5Mode(false).hashPrefix('!');
+        //$routeProvider
             /*.when('/', {
                 controller: 'HomeController',
                 templateUrl: 'home/home.view.html',

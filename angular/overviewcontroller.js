@@ -63,7 +63,7 @@ angular.module('myApp')
                                 weekStart : value.weekAsString,
                                 monthStart : value.monthAsString
                             });
-                        if(sdate > $scope.dateStart & sdate < $scope.dateEnd)
+                        if(sdate > $scope.dateStart & sdate < $scope.dateEnd & value.Duration > 60)
                         {
                             $log.log("Event date: " + sdate);
                             var newEvent = {
