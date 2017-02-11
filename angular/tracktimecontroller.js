@@ -120,6 +120,10 @@ angular.module('myApp')
                     $scope.totalTime = $scope.myData[$scope.currentIndex].totalTime;
                     if($scope.lapTime % updateInterval == 0)
                     {
+                        //$log.log('Updating work item');
+                        //$log.log('$scope.totalTime: ' + $scope.totalTime);
+                        //$log.log('idworkItem: ' + $scope.myData[$scope.currentIndex].idworkItem);
+                        //$log.log('$scope.sessionkey: ' + $scope.sessionkey);
                         $http.post('PHP/workItem_update.php', {
                             'duration' : $scope.totalTime,
                             'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem,
@@ -127,6 +131,7 @@ angular.module('myApp')
                         }
                                   ).then(function (data, status, headers, config) {
                             // Do nothing. Only persist.
+                            //$log.log('Respone: ' + data.data);
                         });
 
                         $http.post('PHP/timeLog_updateCreate.php', {'durationLap' : $scope.lapTime, 
@@ -134,10 +139,10 @@ angular.module('myApp')
                                                                     'idTimeLog' : $scope.idTimeLog,
                                                                     'sessionkey' : $scope.sessionkey
                                                                    }
-                                  ).success(function (data, status, headers, config) {
+                                  ).then(function (data, status, headers, config) {
                             // Do nothing. Only persist.
 
-                            newTimeId = data[0].myid;
+                            newTimeId = data.data[0].myid;
                             if(newTimeId >= 0)
                             {
                                 $scope.idTimeLog = newTimeId;
