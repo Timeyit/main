@@ -259,7 +259,7 @@ public class TimeyEngine {
 		}
 		else if(hours == 0)
 		{
-			return String.format("%02d min %02d sec", minutes, seconds);
+			return String.format("%02d min", minutes);
 		}
 		else
 		{
