@@ -102,7 +102,7 @@ angular.module('myApp')
             'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem,
             'sessionkey' : $scope.sessionkey
         }
-                  ).success(function (data, status, headers, config) {
+                  ).then(function (data, status, headers, config) {
             // refresh the list
             $scope.getAll();
         });
@@ -125,7 +125,7 @@ angular.module('myApp')
                             'idworkItem' : $scope.myData[$scope.currentIndex].idworkItem,
                             'sessionkey' : $scope.sessionkey
                         }
-                                  ).success(function (data, status, headers, config) {
+                                  ).then(function (data, status, headers, config) {
                             // Do nothing. Only persist.
                         });
 
@@ -198,7 +198,7 @@ angular.module('myApp')
                 'itemName' : $scope.nameWorkItem, 
                 'sessionkey' : $scope.sessionkey
             }
-                      ).success(function (data, status, headers, config) {
+                      ).then(function (data, status, headers, config) {
 
                 $scope.nameWorkItem = '';
 

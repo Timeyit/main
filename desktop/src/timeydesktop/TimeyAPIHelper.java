@@ -65,7 +65,7 @@ public class TimeyAPIHelper {
 				String responseData = IOUtils.toString(instream, "UTF-8");
 				instream.close();
 				System.out.println("Response: " + responseData);
-				if (responseData.contains("fail")) {
+				if (responseData.contains("fail") || responseData.contains("ERROR") ) {
 					return null;
 				} else {
 					TimeyEngine.SessionKey = responseData;

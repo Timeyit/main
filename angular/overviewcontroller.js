@@ -208,7 +208,7 @@ angular.module('myApp')
     };
     /* alert on eventClick */
     $scope.alertOnEventClick = function( date, jsEvent, view){
-        $scope.alertMessage = (date.title + ' was clicked ');
+        $scope.alertMessage = (date.title + '. ' + date.start + " - " + date.end);
     };
     /* alert on Drop */
     $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
