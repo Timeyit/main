@@ -8,28 +8,29 @@
  
     config.$inject = ['$routeProvider', '$locationProvider'];
     function config($routeProvider, $locationProvider) {
-        $locationProvider.html5Mode(false).hashPrefix('!');
-        //$routeProvider
-            /*.when('/', {
-                controller: 'HomeController',
-                templateUrl: 'home/home.view.html',
-                controllerAs: 'vm'
+        $locationProvider.html5Mode(true).hashPrefix('!');
+        $routeProvider
+            .when('/', {
+                templateUrl: 'index.html'
             })
- 
+            
+            .when('/tracktime', {
+                templateUrl: 'tracktime.html', controller: 'tracktimecontroller'
+            })
+        
+            .when('/overview', {
+                templateUrl: 'overview.html', controller: 'overviewcontroller'
+            })
+            
+            .when('/reporting', {
+                templateUrl: 'reporting.html'
+            })
+        
             .when('/login', {
-                controller: 'LoginController',
-                templateUrl: 'login/login.view.html',
-                controllerAs: 'vm'
+                templateUrl: 'index.html'
             })
  
-            .when('/register', {
-                controller: 'RegisterController',
-                templateUrl: 'register/register.view.html',
-                controllerAs: 'vm'
-            })
- 
-            .otherwise({ redirectTo: '/login' });
-            */
+            .otherwise({ redirectTo: '/' });
     }
  
     run.$inject = ['$rootScope', '$location', '$cookieStore', '$http'];
@@ -42,10 +43,10 @@
  
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
             // redirect to login page if not logged in and trying to access a restricted page
-            var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
+            var restrictedPage = $.inArray($location.path(), ['/tracktime', '/overview', '/reporting']) === -1;
             var loggedIn = $rootScope.globals.currentUser;
             if (restrictedPage && !loggedIn) {
-                $location.path('/login');
+                $location.path('/');
             }
         });
     }

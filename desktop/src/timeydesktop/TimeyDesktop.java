@@ -301,9 +301,9 @@ public class TimeyDesktop {
 	
 	public static void HandleLogin()
 	{
-		
 		try
 		{
+			TimeyEngine.ShowDarkNotification("Timey Started!", 2000);
 			TimeyConfig properties = new TimeyConfig();
 			int tries = 0;
 			while(TimeyEngine.SessionKey == null)
@@ -313,12 +313,25 @@ public class TimeyDesktop {
 				if(tries > 3)
 				{
 					TimeyLog.LogSevere("Tried to log in 3 times. Exiting.");
+					TimeyEngine.ShowDarkNotification("Tried to log in 3 times. Exiting.", 3000);
+
 					System.exit(0);
 				}
 				
 				TimeyAPIHelper.OpenSession();
 				if(TimeyEngine.SessionKey == null)
 				{
+					if(tries > 1)
+					{
+						TimeyEngine.ShowDarkNotification("Log in failed. Please try again.", 3000);
+
+					}
+					else
+					{
+						TimeyEngine.ShowDarkNotification("Please log in.", 3000);
+					}
+					
+
 					try {
 						UIManager.setLookAndFeel(
 						        UIManager.getSystemLookAndFeelClassName());
@@ -357,12 +370,15 @@ public class TimeyDesktop {
 			        }
 			        else {
 			        	TimeyLog.LogSevere("Error logging in. Exiting");
+						TimeyEngine.ShowDarkNotification("Log in canceled. Exiting.", 3000);
+
 			        	System.exit(0);
 			        }
 				    
 				}
 			}
 			PopulateTrackMenu();
+			TimeyEngine.ShowDarkNotification("Logged in. Right-click taskbar icon to start.", 2000);
 		}
 		catch(IOException ex)
 		{

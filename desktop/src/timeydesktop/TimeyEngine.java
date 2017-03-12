@@ -168,6 +168,7 @@ public class TimeyEngine {
 		int TimeStartSec = (int) Math.round((double) timeSinceStart.toDurationMillis() / (double) 1000);
 		// First we define the style/theme of the window.
 		// Note how we override the default values
+		
 		INotificationStyle style = new DarkDefaultNotification().withWidth(400) // Optional
 				.withAlpha(0.9f) // Optional
 				;
@@ -199,22 +200,17 @@ public class TimeyEngine {
 	public void ShowNoTrackingReminderPopup() {
 		TimeyLog.LogInfo("Showing tracking reminder popup");
 
-		INotificationStyle style = new LightDefaultNotification()
-				.withWidth(400)
-				.withAlpha(0.9f)
-				;
-
-		new NotificationBuilder()
-				.withStyle(style).withTitle("Timey")
-				.withMessage("Currently not tracking time.")
-				.withDisplayTime(4000)
-				.withPosition(Positions.SOUTH_EAST)
-				.showNotification();
+		TimeyEngine.ShowLightNotification("Currently not tracking time.", 4000);
 	}
 
 	public void ShowTrackStartPopup(String taskName) {
 		TimeyLog.LogInfo("Showing start tracking popup. Item: " + taskName);
 
+		TimeyEngine.ShowDarkNotification("Now tracking item: " + taskName, 3000);
+	}
+	
+	public static void ShowDarkNotification(String message, int displayTime)
+	{
 		INotificationStyle style = new DarkDefaultNotification()
 				.withWidth(400)
 				.withAlpha(0.9f)
@@ -224,12 +220,29 @@ public class TimeyEngine {
 		new NotificationBuilder()
 				.withStyle(style)
 				.withTitle("Timey")
-				.withMessage("Now tracking item: " + taskName)
-				.withDisplayTime(3000)
+				.withMessage(message)
+				.withDisplayTime(displayTime)
 				.withPosition(Positions.SOUTH_EAST)
 				.showNotification();
 	}
+	
+	public static void ShowLightNotification(String message, int displayTime)
+	{
+		INotificationStyle style = new LightDefaultNotification()
+				.withWidth(400)
+				.withAlpha(0.9f)
+				;
 
+		// Now lets build the notification
+		new NotificationBuilder()
+				.withStyle(style)
+				.withTitle("Timey")
+				.withMessage(message)
+				.withDisplayTime(displayTime)
+				.withPosition(Positions.SOUTH_EAST)
+				.showNotification();
+	}
+	
 	public void CloseApplication() {
 		TimeyLog.LogInfo("Closing application");
 		System.exit(0);
@@ -237,6 +250,7 @@ public class TimeyEngine {
 
 	public void OpenReportPage() {
 		TimeyLog.LogInfo("Opening report page");
+		TimeyEngine.ShowDarkNotification("Opening Timey Report Page", 3000);
 		String url = TimeyEngine.TimeyBase + "/goto.html#?page=reporting.html&sessionkey=" + TimeyEngine.SessionKey;
 		TimeyLog.LogInfo("Navigating to: " + url);
 		try {

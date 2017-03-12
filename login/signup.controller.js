@@ -37,15 +37,15 @@ angular.module('myApp')
             'username' : vm.username,
             'password' : md5.createHash("mysalt" + vm.password),
             'email' : vm.email}
-                  ).success(function (data, status, headers, config) {
+                  ).then(function (data, status, headers, config) {
             // Do nothing. Only persist.
-            $log.log("Got data: " + data);
-            if(data == "OK")
+            $log.log("Got data: " + data.data);
+            if(data.data == "OK")
             {
                 // Send confirmation email.
                 $log.log('Sending welcome email');
                 $http.post('PHP/send_welcome_email.php', {'username' : vm.username, 'email' : vm.email}
-                          ).success(function (data, status, headers, config) {
+                          ).then(function (data, status, headers, config) {
                     $log.log('Sent welcome email');
                 });
 
