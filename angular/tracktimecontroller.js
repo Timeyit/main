@@ -1,6 +1,6 @@
 angular.module('myApp')
 
-    .controller('tracktimecontroller', function($scope, $http, $location, $filter, ngTableParams, $window, $interval, UserService, AuthenticationService,$log) {
+    .controller('tracktimecontroller', function($scope, $http, $location, $filter, ngTableParams, $window, $interval, UserService, AuthenticationService,$log, webNotification) {
 
     $scope.myData = [];
     $scope.idTimeLog = -1;
@@ -10,7 +10,7 @@ angular.module('myApp')
 
     $scope.user = AuthenticationService.GetUsername();
     $scope.sessionkey = AuthenticationService.GetSessionKey();
-    
+
     $scope.allUsers = [];/*
     vm.deleteUser = deleteUser;*/
     updateInterval = 2;
@@ -111,6 +111,26 @@ angular.module('myApp')
     $scope.startTimer = function() {
         if ( angular.isDefined(stop) ) return;
         $scope.isTracking = true;
+        webNotification.showNotification('Timey', {
+            body: 'Started Tracking: ' + $scope.myData[$scope.currentIndex].task,
+            //icon: 'my-icon.ico',
+            onClick: function onNotificationClicked() {
+                console.log('Notification clicked.');
+            },
+            autoClose: 4000 //auto close the notification after 4 seconds (you can manually close it via hide function)
+        }, function onShow(error, hide) {
+            if (error) {
+                window.alert('Unable to show notification: ' + error.message);
+            } else {
+                console.log('Notification Shown.');
+
+                setTimeout(function hideNotification() {
+                    console.log('Hiding notification....');
+                    hide(); //manually close the notification (you can skip this if you use the autoClose option)
+                }, 5000);
+            }
+        });
+
         stop = $interval(function() {
             if ($scope.isTracking)
             {
@@ -148,6 +168,30 @@ angular.module('myApp')
                                 $scope.idTimeLog = newTimeId;
                             }
 
+                        });
+                    }
+
+                    if($scope.lapTime % 300 == 0)
+                    {
+                        var lapTimeString = $filter('secondsToHHmmss')($scope.lapTime);
+                        webNotification.showNotification('Timey', {
+                            body: 'Currently Tracking: ' + $scope.myData[$scope.currentIndex].task + " (" + lapTimeString + ")",
+                            //icon: 'my-icon.ico',
+                            onClick: function onNotificationClicked() {
+                                console.log('Notification clicked.');
+                            },
+                            autoClose: 4000 //auto close the notification after 4 seconds (you can manually close it via hide function)
+                        }, function onShow(error, hide) {
+                            if (error) {
+                                window.alert('Unable to show notification: ' + error.message);
+                            } else {
+                                console.log('Notification Shown.');
+
+                                setTimeout(function hideNotification() {
+                                    console.log('Hiding notification....');
+                                    hide(); //manually close the notification (you can skip this if you use the autoClose option)
+                                }, 5000);
+                            }
                         });
                     }
 
@@ -285,7 +329,11 @@ angular.module('myApp')
             return new Date(1970, 0, 1).setSeconds(seconds);
         };
     }])
-
+    .filter('secondsToHHmmss', function($filter) {
+    return function(seconds) {
+        return $filter('date')(new Date(0, 0, 0).setSeconds(seconds), 'HH:mm:ss');
+    };
+})
 ;
 
 

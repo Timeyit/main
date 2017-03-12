@@ -2,13 +2,13 @@
     'use strict';
  
     angular
-        .module('myApp', ['ngRoute', 'ngCookies','ngTable','angular-md5','ngConfirm','ui.calendar','ui.bootstrap'])
+        .module('myApp', ['ngRoute', 'ngCookies','ngTable','angular-md5','ngConfirm','ui.calendar','ui.bootstrap','angular-web-notification'])
         .config(config)
         .run(run);
  
     config.$inject = ['$routeProvider', '$locationProvider'];
     function config($routeProvider, $locationProvider) {
-        $locationProvider.html5Mode(true).hashPrefix('!');
+        /*$locationProvider.html5Mode(true).hashPrefix('!');
         $routeProvider
             .when('/', {
                 templateUrl: 'index.html'
@@ -30,7 +30,7 @@
                 templateUrl: 'index.html'
             })
  
-            .otherwise({ redirectTo: '/' });
+            .otherwise({ redirectTo: '/' });*/
     }
  
     run.$inject = ['$rootScope', '$location', '$cookieStore', '$http'];
@@ -43,11 +43,11 @@
  
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
             // redirect to login page if not logged in and trying to access a restricted page
-            var restrictedPage = $.inArray($location.path(), ['/tracktime', '/overview', '/reporting']) === -1;
+            /*var restrictedPage = $.inArray($location.path(), ['/tracktime', '/overview', '/reporting']) === -1;
             var loggedIn = $rootScope.globals.currentUser;
             if (restrictedPage && !loggedIn) {
                 $location.path('/');
-            }
+            }*/
         });
     }
  

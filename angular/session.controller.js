@@ -31,7 +31,7 @@
             if($scope.myUser == "")
             {
                 $log.log("SessionController - Validation Failed");
-                $location.path('/login')
+                $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/index.html';
             }
         }
         
@@ -41,7 +41,7 @@
             if($scope.myUser == "")
             {
                 $log.log("SessionController - Redirecting to main");
-                $location.path('/')
+                $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/index.html';
             }
         }
         
@@ -49,7 +49,7 @@
             $log.log("SessionController - LogOff");
             //gapi.auth.signOut();
             AuthenticationService.SetCredentials("","");
-            $location.path('/')
+            $window.location.href = 'http://' + $location.host() + ':' + $location.port() + '/index.html';
         };
         
     }

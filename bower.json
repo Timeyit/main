@@ -27,7 +27,8 @@
     "bootstrap-datepicker": "*",
     "angular-confirm": "*",
     "angular-md5": "*",
-    "angular-table": "*"
+    "angular-table": "*",
+    "angular-web-notification": "^1.2.10"
   },
   "resolutions": {
     "angular": "1.6.1"
