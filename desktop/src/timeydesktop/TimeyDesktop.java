@@ -303,7 +303,6 @@ public class TimeyDesktop {
 	{
 		try
 		{
-			TimeyEngine.ShowDarkNotification("Timey Started!", 2000);
 			TimeyConfig properties = new TimeyConfig();
 			int tries = 0;
 			while(TimeyEngine.SessionKey == null)

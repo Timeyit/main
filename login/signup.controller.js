@@ -63,16 +63,21 @@ angular.module('myApp')
                     }
                 });
             }
-            else if(data == "exists")
+            else if(data.data == "exists")
             {
                 $scope.error = "Username unavailable.";
                 vm.username = "";
                 vm.password = "";
                 vm.passwordRep = "";
+                vm.email = "";
             }
             else
             {
                 $scope.error = "Failed to create user.";
+                vm.username = "";
+                vm.password = "";
+                vm.passwordRep = "";
+                vm.email = "";
             }
         });
     };
