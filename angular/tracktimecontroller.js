@@ -330,10 +330,10 @@ angular.module('myApp')
         };
     }])
     .filter('secondsToHHmmss', function($filter) {
-    return function(seconds) {
-        return $filter('date')(new Date(0, 0, 0).setSeconds(seconds), 'HH:mm:ss');
-    };
-})
+        return function(seconds) {
+            return $filter('date')(new Date(0, 0, 0).setSeconds(seconds), 'HH:mm:ss');
+        };
+    })
 ;
 
 

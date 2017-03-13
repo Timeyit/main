@@ -208,7 +208,7 @@ angular.module('myApp')
     };
     /* alert on eventClick */
     $scope.alertOnEventClick = function( date, jsEvent, view){
-        $scope.alertMessage = (date.title + '. ' + date.start + " - " + date.end);
+        $scope.alertMessage = (date.title + '. ' + $filter('secondsToHHmmss')(date.start/1000) + " - " + $filter('secondsToHHmmss')(date.end/1000));
     };
     /* alert on Drop */
     $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
@@ -306,6 +306,11 @@ angular.module('myApp')
             return new Date(1970, 0, 1).setSeconds(seconds);
         };
     }])
+    .filter('secondsToHHmmss', function($filter) {
+        return function(seconds) {
+            return $filter('date')(new Date(0, 0, 0).setSeconds(seconds), 'HH:mm:ss');
+        };
+    })
 
 ;
 

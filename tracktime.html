@@ -143,7 +143,9 @@
                                     <div ng-cloak class="dashboardcontrol">
                                         <br ng-if="totalTime == ''">
                                         <span>{{  currentTask }}<br>
-                                            <span ng-if="totalTime != ''">{{  totalTime | secondsToDateTime | date:'HH:mm:ss' }}</span>
+                                            <span ng-if="totalTime != ''">Lap: {{  lapTime | secondsToDateTime | date:'HH:mm:ss' }}</span>
+                                            <br>
+                                            <span ng-if="totalTime != ''">Total: {{  totalTime | secondsToDateTime | date:'HH:mm:ss' }}</span>
                                             <br>
                                             <b><span ng-if="totalTime != '' && isTracking == true" ng-click="stopTimer()" class="fingercursoronhover">Stop</span>
                                                 <span ng-if="totalTime != '' && isTracking == false"  ng-click="startTimer()" class="fingercursoronhover">Start</span></b>

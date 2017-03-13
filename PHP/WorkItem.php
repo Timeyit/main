@@ -111,6 +111,12 @@ class WorkItem{
             return "ERRORSESSION";
         }
         
+        $refresh_result = $session->refreshSession();
+
+        if (strpos($refresh_result, 'ERROR') !== false) {
+            echo "error";
+        }
+        
         // Create connection
         $Settings = new Settings();
         $conn = mysql_connect($Settings->host, $Settings->username, $Settings->password);
